@@ -8,7 +8,7 @@ describe('ship', () => {
     })
     
     test('Create new battleship & check init length, hitsAmount & isSunk parameters', () => {    
-        expect(ship.length).toBe(4);
+        expect(ship.shipLength).toBe(4);
         expect(ship.hitsAmount).toBe(0);
         expect(ship.isSunk()).toBe(false);
     })

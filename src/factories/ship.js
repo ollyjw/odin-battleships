@@ -7,24 +7,29 @@
 const Ship = (shipType) => {
     const shipClasses = {
         carrier: {
-            length: 5,
+            shipLength: 5,
+            id: 1,
         },
         battleship: {
-            length: 4,
+            shipLength: 4,
+            id: 2,
         },
         submarine: {
-            length: 3,
+            shipLength: 3,
+            id: 3,
         },
         cruiser: {
-            length: 3,
+            shipLength: 3,
+            id: 4,
         },
         patrolBoat: {
-            length: 2,
+            shipLength: 2,
+            id: 5,
         },
     };
 
     let hitsAmount = 0;
-    const { length } = shipClasses[shipType];
+    const { shipLength, id } = shipClasses[shipType];
 
     // function that increases the number of ‘hits’ to your ship.
     function hit() {
@@ -33,7 +38,7 @@ const Ship = (shipType) => {
 
     // calculates whether has sunk based on ship's length and the number of ‘hits’.
     function isSunk() {
-        if (this.hitsAmount >= length) {
+        if (this.hitsAmount >= shipLength) {
             return true;
         } else {
             return false;
@@ -41,9 +46,11 @@ const Ship = (shipType) => {
     }
 
     return {
-        length,
+        shipClasses,
+        shipLength,
         hit,
         hitsAmount,
+        id,
         isSunk
     };
 }
