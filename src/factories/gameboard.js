@@ -1,6 +1,6 @@
 import Ship from "./ship";
 
-// Gameboards should be able to place ships at specific coordinates by calling the ship factory function.
+// Gameboards should be able to place ships at specific coordinates by calling the ship factory function. DONE
 // Gameboards should have a receiveAttack function that takes a pair of coordinates, determines whether or not the attack hit a ship and then sends the ‘hit’ function to the correct ship, or records the coordinates of the missed shot.
 // Gameboards should keep track of missed attacks so they can display them properly.
 // Gameboards should be able to report whether or not all of their ships have been sunk.
@@ -22,17 +22,6 @@ const Gameboard = () => {
         return board;
     }
 
-    //     0: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    //     1: ['', '', '', '', '', '', '', '', '', '']
-    //     2: ['', '', '', '', '', '', '', '', '', '']    
-    //     3: ['', '', '', '', '', '', '', '', '', '']
-    //     4: ['', '', '', '', '', '', '', '', '', '']
-    //     5: ['', '', '', '', '', '', '', '', '', '']
-    //     6: ['', '', '', '', '', '', '', '', '', '']
-    //     7: ['', '', '', '', '', '', '', '', '', '']
-    //     8: ['', '', '', '', '', '', '', '', '', '']
-    //     9: ['', '', '', '', '', '', '', '', '', '']
-
     const boardArr = createBoardArray();
     
     const ship = {
@@ -51,7 +40,7 @@ const Gameboard = () => {
         // amount of coords between the 2 given inputs
         const coordsAmount = allCoords.length;
         // Get shipLength & id props from Ship factory
-        const { shipLength, id } = ship[shipType]; //currently undefined...
+        const { shipLength, id } = ship[shipType];
         
         const types = Object.keys(ship); // ['carrier', 'battleship', etc]       
         for (let i = 0; types.length > i; i++) {           
@@ -60,14 +49,12 @@ const Gameboard = () => {
                     const [row, col] = coord;
                     boardArr[row][col] = id;
                 })
-            } // NOTES to self: submarine and cruiser have same shiplength...
-            // what happens in instance of the input coords giving diff amount num to shiplength num...
-        }
-     
+            }
+        }     
         return boardArr;
     }
 
-    // return all coords between, & including, two input coords, eg. [0,0], [0,3]
+    // return array of all coords between, & including, two input coords eg. [0,0], [0,3]
     function getAllCoords(startPos, endPos) {
         // formats each input into array with 2 items
         const [startRow, startCol] = startPos;
@@ -83,7 +70,7 @@ const Gameboard = () => {
                 return [row, startCol];
             });
 
-        } else { // if ship placed horizontally
+        } else { // if ship placed horizontally (same row vals)
             const allColNums = getAllNumsBetween(startCol, endCol);
             allCoords = allColNums.map((col) => {
                 return [startRow, col];
@@ -105,7 +92,7 @@ const Gameboard = () => {
             high = y;
             low = x;
         }
-        
+        // push nums from low to high to nums array
         for (let i = low; i <= high; i++) {
             nums.push(i);
         }
