@@ -23,6 +23,7 @@ const Gameboard = () => {
     }
 
     const boardArr = createBoardArray();
+    const shipsArr = [];
     
     const ship = {
         carrier: Ship('carrier'),
@@ -45,13 +46,15 @@ const Gameboard = () => {
         const types = Object.keys(ship); // ['carrier', 'battleship', etc]       
         for (let i = 0; types.length > i; i++) {           
             if (shipType === types[i] && shipLength === coordsAmount) {
+                // push ship id to ships array
+                shipsArr.push(id);
+                // add id to each coord (board array indeces)
                 allCoords.forEach((coord) => {
                     const [row, col] = coord;
                     boardArr[row][col] = id;
                 })
             }
         }     
-        return boardArr;
     }
 
     // return array of all coords between, & including, two input coords eg. [0,0], [0,3]
@@ -99,11 +102,39 @@ const Gameboard = () => {
         return nums;
     }
 
+    // takes pair of coords, determines whether the attack hit a ship and sends hit function to correct ship or records coords of missed shot
+    function receiveAttack(coords) {
+        const [row, col] = coords;
+        // Store value of the given board array indeces
+        const boardValue = boardArr[row][col];
+        // coords contain a ship if boardValue is a number...
+        const coordsContainShip = typeof boardValue === 'number';
+
+        if (coordsContainShip) {
+            const shipId = boardValue;
+            const shipObj = shipsArr[shipId];
+
+            shipObj.hit(); // test on line 75 fails - Cannot read properties of undefined (reading 'hit'). But will equal '2x' if commented..
+
+            // append an X to value to represent a hit
+            boardArr[row][col] += 'X';
+        } else {
+            // board value to M for a miss
+            boardArr[row][col] = 'M';
+        }
+    }
+
+    function getArray() {
+        return boardArr;
+    }
+
     return { 
         createBoardArray,
         getAllCoords,
         getAllNumsBetween,
+        getArray,
         placeShip,
+        receiveAttack
     };
 }
 

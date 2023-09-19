@@ -35,8 +35,9 @@ describe('Gameboard factory', () => {
         ])
     })
 
-    test('Place a ship in the gameboard array', () => {
-        expect(board.placeShip('battleship', [3,0], [3,3])).toEqual([
+    test('Place a battleship in the gameboard array', () => {
+        board.placeShip('battleship', [3,0], [3,3]);
+        expect(board.getArray()).toEqual([
             ['', '', '', '', '', '', '', '', '', ''],
             ['', '', '', '', '', '', '', '', '', ''],
             ['', '', '', '', '', '', '', '', '', ''],
@@ -50,8 +51,9 @@ describe('Gameboard factory', () => {
         ])
     })
 
-    test('Place a ship in the gameboard array', () => {
-        expect(board.placeShip('cruiser', [0,5], [2,5])).toEqual([
+    test('Place a cruiser in the gameboard array', () => {
+        board.placeShip('cruiser', [0,5], [2,5]);
+        expect(board.getArray()).toEqual([
             ['', '', '', '', '', 4, '', '', '', ''],
             ['', '', '', '', '', 4, '', '', '', ''],
             ['', '', '', '', '', 4, '', '', '', ''],
@@ -63,6 +65,17 @@ describe('Gameboard factory', () => {
             ['', '', '', '', '', '', '', '', '', ''],
             ['', '', '', '', '', '', '', '', '', '']
         ])
+    })
+
+    test('recieve attack on empty coords', () => {
+        board.receiveAttack([0,5]);
+        expect(board.getArray()[0][5]).toEqual('M');
+    })
+
+    test('recieve attack on battleship', () => {
+        board.placeShip('battleship', [3,0], [3,3]);
+        board.receiveAttack([3,0]);
+        expect(board.getArray()[3][0]).toEqual('2X');
     })
 
 })
