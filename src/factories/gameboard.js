@@ -46,8 +46,9 @@ const Gameboard = () => {
         const types = Object.keys(ship); // ['carrier', 'battleship', etc]       
         for (let i = 0; types.length > i; i++) {           
             if (shipType === types[i] && shipLength === coordsAmount) {
-                // push ship id to ships array
-                shipsArr.push(id);
+                // push ship obj to ships array
+                const shipObj = ship[shipType];
+                shipsArr.push(shipObj);
                 // add id to each coord (board array indeces)
                 allCoords.forEach((coord) => {
                     const [row, col] = coord;
@@ -56,7 +57,7 @@ const Gameboard = () => {
             }
         }     
     }
-
+    
     // return array of all coords between, & including, two input coords eg. [0,0], [0,3]
     function getAllCoords(startPos, endPos) {
         // formats each input into array with 2 items
@@ -111,24 +112,49 @@ const Gameboard = () => {
         const coordsContainShip = typeof boardValue === 'number';
 
         if (coordsContainShip) {
-            const shipId = boardValue;
-            const shipObj = shipsArr[shipId];
+            const types = Object.keys(ship); // ['carrier', 'battleship', etc]
+            for (let i = 0; types.length > i; i++) { 
+                // grab id from ship props
+                const { id } = ship[types[i]];
 
-            shipObj.hit(); // test on line 75 fails - Cannot read properties of undefined (reading 'hit'). But will equal '2x' if commented..
+                // if the board val is equal to id of ship obj
+                if (boardValue === id) {
 
-            // append an X to value to represent a hit
-            boardArr[row][col] += 'X';
+                    // send hit function to that ship obj
+                    const shipObj = ship[types[i]];
+                    shipObj.hit();
+    
+                    // append an X to value to represent a hit
+                    boardArr[row][col] += 'X';
+    
+                    // append S to represent Sunk to entire ship coords
+                    if (shipObj.isSunk()) {
+                        boardArr.forEach((row, r) => {
+                            row.forEach((col, c) => {
+                                boardArr[r][c] += 'S';
+                            })
+                        })                
+                        return 'Sunk';
+                    } 
+                    if (allShipsSunk()) return 'Game Over';
+                }
+            }
+
         } else {
             // board value to M for a miss
             boardArr[row][col] = 'M';
         }
+        
     }
+    // The every() method of Array instances tests whether all elements in the array pass the test implemented by the provided function. It returns a Boolean value.
+    const allShipsSunk = () => shipsArr.every((ship) => ship.isSunk());
 
     function getArray() {
         return boardArr;
     }
 
     return { 
+        allShipsSunk,
         createBoardArray,
         getAllCoords,
         getAllNumsBetween,

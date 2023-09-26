@@ -78,4 +78,26 @@ describe('Gameboard factory', () => {
         expect(board.getArray()[3][0]).toEqual('2X');
     })
 
+    test('place all ships and recieve attack on patrol boat', () => {
+        board.placeShip('patrolBoat', [9,0], [9,1]);
+        board.placeShip('battleship', [3,0], [3,3]);
+        board.placeShip('submarine', [5,2], [5,4]);
+        board.placeShip('carrier', [5,9], [9,9]);
+        board.placeShip('cruiser', [0,1], [0,3]);
+        board.receiveAttack([9,0]);
+        expect(board.getArray()[9][0]).toEqual('5X');
+    })
+
+    test('Are all ships sunk: false test', () => {
+        board.placeShip('patrolBoat', [9,0], [9,1]);
+        expect(board.allShipsSunk()).toBeFalsy();
+    })
+
+    test('Are all ships sunk: true test', () => {
+        board.placeShip('patrolBoat', [9,0], [9,1]);
+        board.receiveAttack([9,0]);
+        board.receiveAttack([9,1]);
+        expect(board.allShipsSunk()).toBeTruthy();
+    })
+
 })
