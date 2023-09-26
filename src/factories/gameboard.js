@@ -131,7 +131,9 @@ const Gameboard = () => {
                     if (shipObj.isSunk()) {
                         boardArr.forEach((row, r) => {
                             row.forEach((col, c) => {
-                                boardArr[r][c] += 'S';
+                                if (boardArr[r][c].toString().includes(id)){
+                                    boardArr[r][c] += 'S';
+                                }
                             })
                         })                
                         return 'Sunk';

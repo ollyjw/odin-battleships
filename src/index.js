@@ -9,5 +9,3 @@
 // Hit or miss is marked on player board
 // When all sqrs of ship hit, it sinks
 // Game over when all ships have been sunk
-
-
