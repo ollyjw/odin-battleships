@@ -1,6 +1,6 @@
 import Ship from '../factories/ship.js';
 
-describe('ship', () => {
+describe('Ship factory tests', () => {
     let ship;
 
     beforeEach(() => {

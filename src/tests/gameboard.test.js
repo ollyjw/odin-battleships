@@ -1,6 +1,6 @@
 import Gameboard from '../factories/gameboard.js';
 
-describe('Gameboard factory', () => {
+describe('Gameboard factory tests', () => {
     let board;
 
     beforeEach(() => {
