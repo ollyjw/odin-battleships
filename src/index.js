@@ -1,4 +1,7 @@
-// import './styles.css';
+import { displayBoard } from "./modules/dom";
+import './styles.css';
+
+displayBoard();
 
 
 // 10x10 sqr grid, letter & num coords
