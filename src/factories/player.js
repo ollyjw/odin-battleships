@@ -15,7 +15,20 @@ const Player = () => {
     }
 
     function attack(coords, enemyBoard) {
+        const repeatPlay = isRepeatPlay(coords, enemyBoard);
+        if (repeatPlay) return 'repeat';
+
         return enemyBoard.receiveAttack(coords);
+    }
+
+    // Check if the coords have been targetted already
+    function isRepeatPlay(coords, enemyBoard) {
+        const [row, col] = coords;
+        const boardArr = enemyBoard.getArray();
+        const boardValue = boardArr[row][col];
+        if (typeof boardValue === 'number') return false;
+        if (boardValue === '') return false;
+        return true;
     }
 
     function genRandomCoords() {
