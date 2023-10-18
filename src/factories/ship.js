@@ -25,7 +25,7 @@ const Ship = (shipType) => {
         patrolBoat: {
             shipLength: 2,
             id: 5,
-        },
+        }
     };
 
     let hitsAmount = 0;
@@ -51,7 +51,7 @@ const Ship = (shipType) => {
         hit,
         hitsAmount,
         id,
-        isSunk
+        isSunk,
     };
 }
 

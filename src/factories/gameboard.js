@@ -4,6 +4,8 @@ import Ship from "./ship";
 // Gameboards should have a receiveAttack function that takes a pair of coordinates, determines whether or not the attack hit a ship and then sends the ‘hit’ function to the correct ship, or records the coordinates of the missed shot.
 // Gameboards should keep track of missed attacks so they can display them properly.
 // Gameboards should be able to report whether or not all of their ships have been sunk.
+// SHIPS SHOULD NOT BE ABLE TO OVERLAP
+
 
 
 const Gameboard = () => {
@@ -33,6 +35,8 @@ const Gameboard = () => {
         patrolBoat: Ship('patrolBoat'),
     };
 
+    const types = Object.keys(ship); // ['carrier', 'battleship', etc]
+
     // place ship's id into the board array between input coords
     function placeShip(shipType, startPos, endPos) { //e.g 'battleship', [0,0], [4,0]
         
@@ -43,7 +47,7 @@ const Gameboard = () => {
         // Get shipLength & id props from Ship factory
         const { shipLength, id } = ship[shipType];
         
-        const types = Object.keys(ship); // ['carrier', 'battleship', etc]       
+        // const types = Object.keys(ship); // ['carrier', 'battleship', etc]       
         for (let i = 0; types.length > i; i++) {           
             if (shipType === types[i] && shipLength === coordsAmount) {
                 // push ship obj to ships array
@@ -56,6 +60,18 @@ const Gameboard = () => {
                 })
             }
         }     
+    }
+       
+    // push shiplength of each ship into new array
+    function getShipLengthArray() {
+        const shipLengthArray = [];
+        //const types = Object.keys(ship);
+        
+        for (let i = 0; types.length > i; i++) {
+            shipLengthArray.push(ship[types[i]].shipLength);
+        }
+        
+        return shipLengthArray;
     }
     
     // return array of all coords between, & including, two input coords eg. [0,0], [0,3]
@@ -101,6 +117,20 @@ const Gameboard = () => {
             nums.push(i);
         }
         return nums;
+    }
+
+    // Find end coord from start coord + shiplength & direction
+    const getEndCoord = (startPos, direction, shipLength) => {
+        const [startRow, startCol] = startPos;
+        let endRow = startRow;
+        let endCol = startCol;
+
+        if (direction === 'vertical') {
+            endRow += shipLength - 1;            
+        } else { // horizontal
+            endCol += shipLength - 1;            
+        }
+        return [endRow, endCol];
     }
 
     // takes pair of coords, determines whether the attack hit a ship and sends hit function to correct ship or records coords of missed shot
@@ -161,8 +191,11 @@ const Gameboard = () => {
         getAllCoords,
         getAllNumsBetween,
         getArray,
+        getEndCoord,
+        getShipLengthArray,
         placeShip,
-        receiveAttack
+        receiveAttack,        
+        types,
     };
 }
 

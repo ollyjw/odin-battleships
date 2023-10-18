@@ -1,14 +1,14 @@
-import { displayBoard } from "./modules/dom";
+import Ship from "./factories/ship";
+import Gameboard from "./factories/gameboard";
+// import * as DOM from './modules/dom';
+import * as GAME from './modules/game';
 import './styles.css';
 
-displayBoard();
+// DOM.renderOuterContainer();
+// DOM.displayBoard();
+
+GAME.startGame();
 
 
-// 10x10 sqr grid, letter & num coords
-// 5 Ship classes occupy differing amount of sqrs
-// Ships cannot overlap
-// Enemy ships hidden from player sight
-// Each turn player announces coord to hit
-// Hit or miss is marked on player board
-// When all sqrs of ship hit, it sinks
-// Game over when all ships have been sunk
+console.log(Ship('patrolBoat').shipLength);
+console.log(Gameboard().getShipLengthArray());

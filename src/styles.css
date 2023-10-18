@@ -10,6 +10,7 @@ body {
     align-content: center;  
     font-family: sans-serif;
     flex-direction: column;
+    height: 100vh;
 }
 
 .gameboard {
@@ -40,4 +41,36 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;    
+}
+
+.menu-card {
+    background-color: rgba(255,255,255,0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position:relative;
+    border: 1px solid rgba(0,0,0,.125);
+    width: 40rem;
+    padding: 45px;
+    
+}
+
+.btn-container {
+    display: flex; 
+    flex-direction: column;
+}
+
+.start-btn {
+    background-color: rgb(59,130,246);
+    color: #fff;
+    padding: 10px 20px;
+    font-size: large;
+    border-style: none;
+    border-radius: 10px;
+    margin-right: 15px;
+    align-self: center;
+}
+
+.title {
+    text-align: center;
 }
