@@ -6,8 +6,6 @@ import Ship from "./ship";
 // Gameboards should be able to report whether or not all of their ships have been sunk.
 // SHIPS SHOULD NOT BE ABLE TO OVERLAP
 
-
-
 const Gameboard = () => {
 
     const createBoardArray = () => {
@@ -47,7 +45,6 @@ const Gameboard = () => {
         // Get shipLength & id props from Ship factory
         const { shipLength, id } = ship[shipType];
         
-        // const types = Object.keys(ship); // ['carrier', 'battleship', etc]       
         for (let i = 0; types.length > i; i++) {           
             if (shipType === types[i] && shipLength === coordsAmount) {
                 // push ship obj to ships array
@@ -65,7 +62,6 @@ const Gameboard = () => {
     // push shiplength of each ship into new array
     function getShipLengthArray() {
         const shipLengthArray = [];
-        //const types = Object.keys(ship);
         
         for (let i = 0; types.length > i; i++) {
             shipLengthArray.push(ship[types[i]].shipLength);
@@ -120,7 +116,7 @@ const Gameboard = () => {
     }
 
     // Find end coord from start coord + shiplength & direction
-    const getEndCoord = (startPos, direction, shipLength) => {
+    function getEndCoord (startPos, direction, shipLength) {
         const [startRow, startCol] = startPos;
         let endRow = startRow;
         let endCol = startCol;
@@ -128,7 +124,7 @@ const Gameboard = () => {
         if (direction === 'vertical') {
             endRow += shipLength - 1;            
         } else { // horizontal
-            endCol += shipLength - 1;            
+            endCol += shipLength - 1;
         }
         return [endRow, endCol];
     }
@@ -181,12 +177,44 @@ const Gameboard = () => {
     // The every() method of Array instances tests whether all elements in the array pass the test implemented by the provided function. It returns a Boolean value.
     const allShipsSunk = () => shipsArr.every((ship) => ship.isSunk());
 
+    // are coords empty, within board
+    // returns true if ship can place between two given coords
+    function canPlaceShipBetween(startPos, endPos) {
+        const allCoords = getAllCoords(startPos, endPos);
+        allCoords.every((coord) => {
+            if (areEmpty(coord) && areWithinBoard(coord)) {
+                return true;
+            }
+        })
+    }
+
+    // Check if coords are within board boundaries
+    function areWithinBoard(coords) {
+        const [row, col] = coords;
+        if (row >= 10 || row < 0 || col >= 10 || col <  0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // Check if coords are empty
+    function areEmpty(coords) {
+        const [row, col] = coords;
+        if (boardArr[row][col] === '') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function getArray() {
         return boardArr;
     }
 
     return { 
         allShipsSunk,
+        canPlaceShipBetween,
         createBoardArray,
         getAllCoords,
         getAllNumsBetween,
