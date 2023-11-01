@@ -120,7 +120,7 @@ const Gameboard = () => {
         const [startRow, startCol] = startPos;
         let endRow = startRow;
         let endCol = startCol;
-        // vertical goes downwards from chosen square, horizontal goes rightwards
+        // vertical goes downwards in array index (upwards in DOM), horizontal goes rightwards
         if (direction === 'vertical') {
             endRow += shipLength - 1;            
         } else { // horizontal
@@ -181,7 +181,7 @@ const Gameboard = () => {
     // returns true if ship can place between two given coords
     function canPlaceShipBetween(startPos, endPos) {
         const allCoords = getAllCoords(startPos, endPos);
-        allCoords.every((coord) => {
+        return allCoords.every((coord) => {
             if (areEmpty(coord) && areWithinBoard(coord)) {
                 return true;
             }
