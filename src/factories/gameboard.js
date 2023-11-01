@@ -120,7 +120,7 @@ const Gameboard = () => {
         const [startRow, startCol] = startPos;
         let endRow = startRow;
         let endCol = startCol;
-
+        // vertical goes downwards from chosen square, horizontal goes rightwards
         if (direction === 'vertical') {
             endRow += shipLength - 1;            
         } else { // horizontal
