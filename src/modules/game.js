@@ -2,7 +2,7 @@ import * as Player from '../factories/player';
 import * as DOM from './dom';
 
 // Main game loop
-// The game loop should set up a new game by creating Players and Gameboards. For now just populate each Gameboard with predetermined coordinates. You can implement a system for allowing players to place their ships later.
+// The game loop should set up a new game by creating Players and Gameboards.
 // The game loop should step through the game turn by turn using only methods from other objects. If at any point you are tempted to write a new function inside the game loop, step back and figure out which class or module that function should belong to.
 // Create conditions so that the game ends once one player’s ships have all been sunk. This function is appropriate for the Game module.
 
@@ -11,7 +11,7 @@ let player;
 
 const resetPlayerObjs = () => {
     player = Player.Player();
-    console.log(player);
+    // console.log(player);
     //computer = Player.Computer();
 }
 
@@ -25,11 +25,12 @@ const startGame = () => {
 // PRE-GAME - take player name, ship placement
 const startPreGame = () => {
     DOM.displayShipPlacementMenu(player);
+    DOM.displayShipPlacement(player);
 }
 
 
-// Start game - display boards & add player name to screen
-// - click event on grid cell to attack enemy board
+// Once ships placed, start game - render player and enemy boards & add player name to screen
+// - click event on grid cell to attack enemy board (get another turn if hit)
 // - receive enemy attack 
 // - repeat until all ships sunks
 
@@ -42,6 +43,7 @@ const startPreGame = () => {
 
 
 export {
+    resetPlayerObjs,
     startPreGame,
     startGame
 }
