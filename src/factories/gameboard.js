@@ -123,7 +123,7 @@ const Gameboard = () => {
         // vertical goes downwards in array index (upwards in DOM), horizontal goes rightwards
         if (direction === 'vertical') {
             endRow += shipLength - 1;            
-        } else { // horizontal
+        } else if (direction === 'horizontal') {
             endCol += shipLength - 1;
         }
         return [endRow, endCol];

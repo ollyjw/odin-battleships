@@ -173,9 +173,9 @@ const displayShipPlacement = (player) => {
             return;
         }
         if (direction === 'vertical') {
-            direction === 'horizontal';
+            direction = 'horizontal';
         } else {
-            direction === 'vertical'
+            direction = 'vertical';
         }
 
         clearHoverEffect(position);
@@ -229,9 +229,9 @@ const displayShipPlacement = (player) => {
         gameboard = displayBoard(boardArr, 'pre-game', placeShipClick);
         gameboard.addEventListener('mouseover', handlePlaceShipMouseEnter);
         gameboard.addEventListener('mouseout', handlePlaceShipMouseLeave);
-        gameboard.addEventListener('contextmenu', rotateDirection); //right click - THIS DOESNT WORK YET
+        gameboard.addEventListener('contextmenu', rotateDirection);
         console.log(boardArr);
-    } else { //render board without click
+    } else { //render board without events
         gameboard = displayBoard(boardArr, 'pre-game');
         console.log(boardArr);
     }
