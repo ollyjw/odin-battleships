@@ -72,7 +72,7 @@ const Gameboard = () => {
     
     // return array of all coords between, & including, two input coords eg. [0,0], [0,3]
     function getAllCoords(startPos, endPos) {
-        // formats each input into array with 2 items
+        // formats each input into array with 2 items & assigns var names to items
         const [startRow, startCol] = startPos;
         const [endRow, endCol] = endPos;
         let allCoords = [];
@@ -182,7 +182,7 @@ const Gameboard = () => {
     function canPlaceShipBetween(startPos, endPos) {
         const allCoords = getAllCoords(startPos, endPos);
         return allCoords.every((coord) => {
-            if (areEmpty(coord) && areWithinBoard(coord)) {
+            if (areWithinBoard(coord) && areEmpty(coord)) {
                 return true;
             }
         })
@@ -214,6 +214,7 @@ const Gameboard = () => {
 
     return { 
         allShipsSunk,
+        areWithinBoard,
         canPlaceShipBetween,
         createBoardArray,
         getAllCoords,

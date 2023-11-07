@@ -34,15 +34,18 @@ const renderMainMenu = () => {
 //     menuCard.innerHTML = '';
 // }
 
+// Remove child els from a parent el
+const clearChildElements = (element) => {
+    while (element.firstChild) {
+        element.removeChild(element.lastChild);
+    }
+}
+
 const displayNameMenu = (playerName) => {
-    const menuCard = document.querySelector('.menu-card');
-    
-    const askNameContainer = document.createElement('div');
+    const menuCard = document.querySelector('.menu-card');    
+    const askNameContainer = document.createElement('div');    
     askNameContainer.classList.add('ask-name-container');
-
-    //const outerContainer = document.querySelector('.container');
     menuCard.appendChild(askNameContainer);
-
     const nameForm = document.createElement('form');
     const nameLabel = document.createElement('label');
     nameLabel.setAttribute('for','name-input');
@@ -83,8 +86,8 @@ function parseCoords(squareId) {
         // second character (col letter) will be translated from A-J to 0-9
         col = squareId.charCodeAt(1) - 65;
     } else { // sqr id string is 3 characters
-        // 10 rows max - always 9
-        row = 9;
+        const firstTwoChars = squareId.slice(0,2);
+        row = parseInt(firstTwoChars) - 1;
         // third character convert to num
         col = squareId.charCodeAt(2) - 65;
     }
@@ -153,9 +156,6 @@ const displayShipPlacement = (player) => {
         if (position === null) {
             return;
         }
-        //console.clear();
-        //console.log(`Placing ${shipType}`);
-        // console.log(`Square ID: ${position}, board array indeces: ${parseCoords(position)}`);
         displayHoverEffect(position);
     }
 
@@ -184,26 +184,25 @@ const displayShipPlacement = (player) => {
 
     // add hover effect to div square id 
     const displayHoverEffect = (position) => {
-        //const startPos = position; // eg. '10A'
-        const startPos = parseCoords(position); // eg. '[9,0]'
-        const endPos = boardObj.getEndCoord(startPos, direction, shipLength);
+        const startPos = parseCoords(position); // eg. 10A = '[9,0]'
+        const endPos = boardObj.getEndCoord(startPos, direction, shipLength); //eg. [9,0], 'vertical', 2 = [10,0]
         
         const allCoords = boardObj.getAllCoords(startPos, endPos);
         // if coords are empty & within board boundaries
         const validShipPlacement = boardObj.canPlaceShipBetween(startPos, endPos);
-
         //console.log(`${shipType}: Start pos:${startPos} End pos: ${endPos}`);
+        console.clear();
 
         allCoords.forEach((coord) => {
-            let idString = convertCoordToId(coord);
-            // console.log(`id string is: ${idString}`);
-
-            if (validShipPlacement) {
-                document.getElementById(`${idString}`).classList.add('valid-ship-placement');
-                //console.log('VALID');
-            } else {
-                document.getElementById(`${idString}`).classList.add('invalid-ship-placement');
-                //console.log('INVALID');
+            console.log(coord);
+            if (boardObj.areWithinBoard(coord)) {
+                let idString = convertCoordToId(coord);
+                //console.log(`id string is: ${idString}, coord is ${coord}`);   
+                if (validShipPlacement) {
+                    document.getElementById(`${idString}`).classList.add('valid-ship-placement');
+                } else {
+                    document.getElementById(`${idString}`).classList.add('invalid-ship-placement');
+                }
             }
         })
     }
@@ -217,15 +216,14 @@ const displayShipPlacement = (player) => {
         })
     }
 
-    let gameboard;
+    const outerContainer = document.querySelector('.container');
+    clearChildElements(outerContainer);
 
-    // 
-    // EVERY CLICK GENERATES A NEW BOARD. MUST FIX!
-    //
+    let gameboard;
 
     // if ship contains a number / isnt undefined
     // i.e. if ships still needs to be placed add click event
-    if (shipLength !== undefined) { // <= need to get the recursive element to work
+    if (shipLength !== undefined) { // <= need to get the recursive element to work****
         gameboard = displayBoard(boardArr, 'pre-game', placeShipClick);
         gameboard.addEventListener('mouseover', handlePlaceShipMouseEnter);
         gameboard.addEventListener('mouseout', handlePlaceShipMouseLeave);
@@ -236,7 +234,6 @@ const displayShipPlacement = (player) => {
         console.log(boardArr);
     }
 
-    const outerContainer = document.querySelector('.container');
     const gameboardContainer = document.createElement('div');
     gameboardContainer.classList.add('pre-game-gameboard-container');
     outerContainer.appendChild(gameboardContainer);
@@ -245,37 +242,32 @@ const displayShipPlacement = (player) => {
 
 // mode will be called as'pre-game' or 'game' strings
 function displayBoard(boardArr, mode, clickCb) {
-    // const outerContainer = document.querySelector('.container');
-    // const gameboard = document.querySelector('.gameboard');
-
     const gameboard = document.createElement('div');
     gameboard.classList.add(`${mode}`, 'gameboard');
-    console.log(boardArr.length);
+
     for (let i = boardArr.length - 1; i >= 0; i--) { // ROW i.e nums
         const row = boardArr[i];
         let rowCoord = i + 1;
         for (let j = 0; j < row.length; j++) { // COL
-            const colCoord = String.fromCharCode(65 + j); // convert to letters;
-            const coordinate = `${rowCoord}${colCoord}`;
             if (j === 0) { // ROW LEGEND
                 const rowLegend = document.createElement("div");                
                 rowLegend.classList.add("legend", "row");
                 rowLegend.textContent = i + 1;
                 gameboard.append(rowLegend);
             }
+            const colCoord = String.fromCharCode(65 + j); // convert to letters;
+            const coordinate = `${rowCoord}${colCoord}`;
             const square = document.createElement('div');
             square.id = coordinate;
             square.classList.add('square');
             gameboard.appendChild(square);
-
-            // 
-            // if (mode === 'pre-game' || mode === 'game') {
-            //     if (boardArr.includes(typeof Number())) {
-            //         square.classList.add('ship');
-            //         square.innerHTML = ":)"
-            //     };
-            // }
-
+            
+            if (mode === 'pre-game' || mode === 'game') {
+                if (typeof boardArr[i][j] === 'number') {
+                    square.classList.add("ship");
+                    square.innerHTML = ":)"
+                };
+            }
         }
     }
     // COL LEGEND
@@ -290,14 +282,9 @@ function displayBoard(boardArr, mode, clickCb) {
     }
    
     if (clickCb) {
-        gameboard.addEventListener('click', clickCb);
-        // const squares = document.querySelectorAll(".square");
-        // squares.forEach(square => {
-        //     square.addEventListener('click', clickCb);
-        // })        
+        gameboard.addEventListener('click', clickCb);       
     }    
     
-    // outerContainer.appendChild(gameboard);
     return gameboard;
 }
 
