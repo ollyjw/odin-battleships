@@ -102,7 +102,7 @@ describe('Gameboard factory tests', () => {
 
     test('Given a start coord, direction and ship length number, does getEndCoord calculate the correct coord', () => {
         expect(board.getEndCoord([0,5], 'vertical', 2)).toEqual([1,5]);
-        expect(board.getEndCoord([0,5], 'horiztonal', 2)).toEqual([0,6]);
+        expect(board.getEndCoord([0,5], 'horizontal', 2)).toEqual([0,6]);
     })
 
 })
