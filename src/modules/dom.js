@@ -1,4 +1,3 @@
-import Gameboard from "../factories/gameboard";
 import * as GAME from "./game";
 
 // display both the player’s boards and render them using information from the Gameboard class/factory.
@@ -114,14 +113,12 @@ const displayShipPlacementMenu = (playerName) => {
 
 const displayShipPlacement = (player) => {
     const boardObj = player.getBoardObj();
-    const boardArr = player.getBoardObj().getArray();
+    const boardArr = player.getBoardArray();    
 
-    const shipsArray = Gameboard().types; //  ['carrier', 'battleship', 'submarine', 'cruiser', 'patrolBoat']
-    const shipLengthArray = boardObj.getShipLengthArray(); // [5, 4, 3, 3, 2] 
-    
     // - pop removes & returns last element of array - once the array is empty it will return undefined
-    const shipLength = shipLengthArray.pop();
-    const shipType = shipsArray.pop();
+    const shipType = player.shipList.pop();
+    const shipLength = player.shipLengthArray.pop();
+
     let direction = 'vertical';
     
     // Click a square to place ship
@@ -139,12 +136,13 @@ const displayShipPlacement = (player) => {
         const endPos = boardObj.getEndCoord(startPos, direction, shipLength);
         const validShipPlacement = boardObj.canPlaceShipBetween(startPos, endPos);
 
-        console.log(`Current ship is: ${shipType} length is ${shipLength} squares`);
-        console.log(`clicked ${e.target.id}`);
-
         // if coords are empty & within board boundaries
         if (validShipPlacement) {
+            // console.log(`Current ship is: ${shipType} length is ${shipLength} squares`);
+            // console.log(`clicked ${e.target.id}`);
+
             boardObj.placeShip(shipType, startPos, endPos); //e.g 'battleship', [0,0], [4,0]
+            console.log(boardArr);
             // recursive - pop a new ship type into placeShip function until every ship is placed
             displayShipPlacement(player);
         }
@@ -190,11 +188,12 @@ const displayShipPlacement = (player) => {
         const allCoords = boardObj.getAllCoords(startPos, endPos);
         // if coords are empty & within board boundaries
         const validShipPlacement = boardObj.canPlaceShipBetween(startPos, endPos);
-        //console.log(`${shipType}: Start pos:${startPos} End pos: ${endPos}`);
-        console.clear();
+
+        //console.log(`${shipType} (${shipLength} squares): Start pos:${startPos} End pos: ${endPos}`);
+        // console.clear();
 
         allCoords.forEach((coord) => {
-            console.log(coord);
+            //console.log(coord);
             if (boardObj.areWithinBoard(coord)) {
                 let idString = convertCoordToId(coord);
                 //console.log(`id string is: ${idString}, coord is ${coord}`);   
@@ -221,14 +220,13 @@ const displayShipPlacement = (player) => {
 
     let gameboard;
 
-    // if ship contains a number / isnt undefined
+    // if shiplength contains a number / isnt undefined
     // i.e. if ships still needs to be placed add click event
-    if (shipLength !== undefined) { // <= need to get the recursive element to work****
+    if (shipLength !== undefined) {
         gameboard = displayBoard(boardArr, 'pre-game', placeShipClick);
         gameboard.addEventListener('mouseover', handlePlaceShipMouseEnter);
         gameboard.addEventListener('mouseout', handlePlaceShipMouseLeave);
         gameboard.addEventListener('contextmenu', rotateDirection);
-        console.log(boardArr);
     } else { //render board without events
         gameboard = displayBoard(boardArr, 'pre-game');
         console.log(boardArr);

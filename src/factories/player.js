@@ -5,13 +5,25 @@ import Gameboard from "./gameboard";
 
 const Player = () => {
     let board = Gameboard();
+    const shipLengthArray = getShipLengthArray();   
+    const shipList = getShipList();
 
     function getBoardObj() {
         return board;
     }
 
     function getBoardArray() {
-        board.getArray();
+        return board.getArray();
+    }
+
+    // ['carrier', 'battleship', 'submarine', 'cruiser', 'patrolBoat']
+    function getShipList() {
+        return board.getShipTypes();
+    }
+
+    // [5, 4, 3, 3, 2] 
+    function getShipLengthArray() {
+        return board.createShipLengthArray();
     }
 
     function attack(coords, enemyBoard) {
@@ -41,7 +53,10 @@ const Player = () => {
         attack,
         genRandomCoords,
         getBoardArray,
-        getBoardObj
+        getBoardObj,        
+        getShipList,
+        shipLengthArray,
+        shipList
     }
 }
 

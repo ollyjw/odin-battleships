@@ -35,6 +35,11 @@ const Gameboard = () => {
 
     const types = Object.keys(ship); // ['carrier', 'battleship', etc]
 
+    function getShipTypes() {
+        const types = Object.keys(ship);
+        return types;
+    }
+
     // place ship's id into the board array between input coords
     function placeShip(shipType, startPos, endPos) { //e.g 'battleship', [0,0], [4,0]
         
@@ -60,7 +65,7 @@ const Gameboard = () => {
     }
        
     // push shiplength of each ship into new array
-    function getShipLengthArray() {
+    function createShipLengthArray() {
         const shipLengthArray = [];
         
         for (let i = 0; types.length > i; i++) {
@@ -217,11 +222,12 @@ const Gameboard = () => {
         areWithinBoard,
         canPlaceShipBetween,
         createBoardArray,
+        createShipLengthArray,
         getAllCoords,
         getAllNumsBetween,
         getArray,
         getEndCoord,
-        getShipLengthArray,
+        getShipTypes,
         placeShip,
         receiveAttack,        
         types,
