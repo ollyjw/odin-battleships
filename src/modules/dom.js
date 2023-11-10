@@ -17,7 +17,7 @@ const renderMainMenu = () => {
     title.classList.add('title');
     title.textContent = "Battleships";
     const startBtnContainer = document.createElement('div');
-    startBtnContainer.classList.add("btn-container");
+    startBtnContainer.classList.add("start-pregame-btn-container");
     const startBtn = document.createElement('btn');
     startBtn.classList.add('start-btn');
     startBtn.textContent = 'Start game';
@@ -215,6 +215,20 @@ const displayShipPlacement = (player) => {
         })
     }
 
+    const handleStartGameplay = () => {
+        // if ships arent all placed, don't start
+        if (shipLength !== undefined) {
+            return;
+        }
+        GAME.startGamePlay();
+    }
+
+    const startGameBtn = document.createElement('button');
+    startGameBtn.classList.add('start-btn');
+    startGameBtn.textContent = 'Start Game';
+    startGameBtn.addEventListener('click', handleStartGameplay);
+
+
     const outerContainer = document.querySelector('.container');
     clearChildElements(outerContainer);
 
@@ -235,10 +249,15 @@ const displayShipPlacement = (player) => {
     const gameboardContainer = document.createElement('div');
     gameboardContainer.classList.add('pre-game-gameboard-container');
     outerContainer.appendChild(gameboardContainer);
-    gameboardContainer.appendChild(gameboard);    
+    gameboardContainer.appendChild(gameboard);   
+
+    const btnContainer = document.createElement('div');
+    btnContainer.classList.add('btn-container');
+    gameboardContainer.appendChild(btnContainer);
+    btnContainer.appendChild(startGameBtn);
 }
 
-// mode will be called as'pre-game' or 'game' strings
+// mode will be called as'pre-game' or 'player'/'enemy' strings
 function displayBoard(boardArr, mode, clickCb) {
     const gameboard = document.createElement('div');
     gameboard.classList.add(`${mode}`, 'gameboard');
@@ -287,10 +306,67 @@ function displayBoard(boardArr, mode, clickCb) {
 }
 
 
+const renderGameLayout = () => {
+    const playerContainer = document.createElement('div');
+    playerContainer.classList.add("player-container");
+    const enemyContainer = document.createElement('div');
+    enemyContainer.classList.add("enemy-container");
+    const turnTrackerContainer = document.createElement('div');
+    turnTrackerContainer.classList.add('turn-tracker-container');
+
+    const turnTracker = document.createElement('h2');
+    turnTracker.classList.add('turntracker');
+    turnTracker.textContent = "YOUR TURN";
+    
+    
+    const outerContainer = document.querySelector('.container');
+    
+    clearChildElements(outerContainer);
+    outerContainer.appendChild(playerContainer);
+    outerContainer.appendChild(turnTrackerContainer);
+    turnTrackerContainer.appendChild(turnTracker);
+    outerContainer.appendChild(enemyContainer);
+}
+
+const renderPlayerBoard = (playerBoardArr) => {
+    const playerBoard = displayBoard(playerBoardArr, 'player');
+    const playerContainer = document.querySelector('.player-container');
+    const playerHeading = document.createElement('h2');
+    playerHeading.classList.add('board-title', 'player');
+    playerHeading.textContent = 'Player board';
+
+    const remainingShipCounter = document.createElement('p');
+    remainingShipCounter.classList.add('ship-counter');
+    remainingShipCounter.textContent = 'X Ships remaining';
+
+    playerContainer.appendChild(playerBoard);
+    playerContainer.appendChild(playerHeading);playerContainer.appendChild(remainingShipCounter);
+}
+
+const renderEnemyBoard = (enemyBoardArr) => {
+    const enemyBoard = displayBoard(enemyBoardArr, 'enemy');
+    const enemyContainer = document.querySelector('.enemy-container');
+    const enemyHeading = document.createElement('h2');
+    enemyHeading.classList.add('board-title', 'enemy');
+
+    const remainingShipCounter = document.createElement('p');
+    remainingShipCounter.classList.add('ship-counter');
+    remainingShipCounter.textContent = 'X Ships remaining';
+
+    enemyHeading.textContent = 'Enemy board';
+    enemyContainer.appendChild(enemyBoard);
+    enemyContainer.appendChild(enemyHeading);
+    enemyContainer.appendChild(remainingShipCounter);    
+}
+
+
 export {    
     displayNameMenu,
     renderOuterContainer,
     renderMainMenu,
     displayShipPlacementMenu,
-    displayShipPlacement
+    displayShipPlacement,
+    renderEnemyBoard,
+    renderGameLayout,
+    renderPlayerBoard
 }

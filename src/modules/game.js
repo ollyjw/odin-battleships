@@ -7,12 +7,12 @@ import * as DOM from './dom';
 // Create conditions so that the game ends once one player’s ships have all been sunk. This function is appropriate for the Game module.
 
 let player;
-//let computer;
+let computer;
 
 const resetPlayerObjs = () => {
     player = Player.Player();
     // console.log(player);
-    //computer = Player.Computer();
+    computer = Player.Computer();
 }
 
 // Main menu - start game btn
@@ -34,9 +34,11 @@ const startPreGame = () => {
 // - receive enemy attack 
 // - repeat until all ships sunks
 
-// const startGame = () => {
-
-// }
+const startGamePlay = () => {
+    DOM.renderGameLayout();
+    DOM.renderEnemyBoard(player.getBoardArray());
+    DOM.renderPlayerBoard(computer.getBoardArray());
+}
 
 
 // Victory screen / restart btn
@@ -45,5 +47,6 @@ const startPreGame = () => {
 export {
     resetPlayerObjs,
     startPreGame,
-    startGame
+    startGame,
+    startGamePlay
 }
