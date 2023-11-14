@@ -43,10 +43,33 @@ const Player = () => {
         return true;
     }
 
+    // generate 2 random numbers between 0-9 and return in array
     function genRandomCoords() {
         const x = Math.floor(Math.random() * 10);
         const y = Math.floor(Math.random() * 10);
         return [x, y];
+    }
+
+    // Recursive ship placement - pop new shiptype & shiplength until all ships placed
+    function placeShipsRandomly() {
+        const shipType = shipList.pop();
+        if (shipType === undefined) return;
+        const shipLength = shipLengthArray.pop();
+        if (shipLength === undefined) return;
+
+        let startPos, direction, endPos, validShipPlacement;
+
+        // while theres no valid ship placement assign values to vars for use in functions until shipType & shipLength return undefined
+        while (!validShipPlacement) {
+            startPos = genRandomCoords();
+            direction = Math.random() < 0.5 ? 'vertical' : 'horizontal';
+            endPos = board.getEndCoord(startPos, direction, shipLength);
+
+            validShipPlacement = board.canPlaceShipBetween(startPos, endPos);
+        }
+        
+        board.placeShip(shipType, startPos, endPos);
+        placeShipsRandomly();
     }
 
     return {
@@ -55,6 +78,7 @@ const Player = () => {
         getBoardArray,
         getBoardObj,        
         getShipList,
+        placeShipsRandomly,
         shipLengthArray,
         shipList
     }
