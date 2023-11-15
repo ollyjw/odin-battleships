@@ -27,14 +27,15 @@ body {
 
 .gameboard {
     display: grid;
-    grid-template-columns: 0.5fr repeat(10, 60px);
-    grid-template-rows: repeat(10, 60px) 0.5fr;    
+    grid-template-columns: 0.5fr repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px) 0.5fr;    
     gap: 3px;
     margin-top: 60px;
 }
 
+
 .square {
-    padding: 20px;
+    /* padding: 20px; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,6 +43,19 @@ body {
     text-transform: capitalize;
     position: relative;
     background-color: #fdffcb;
+}
+
+@media only screen and (min-width:1063px) {
+    .gameboard {
+        display: grid;
+        grid-template-columns: 0.5fr repeat(10, 60px);
+        grid-template-rows: repeat(10, 60px) 0.5fr;    
+        gap: 3px;
+        margin-top: 60px;
+    }
+    .square {
+        padding: 20px;
+    }
 }
 
 .square:hover {
