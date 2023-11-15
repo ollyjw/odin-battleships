@@ -102,6 +102,7 @@ function convertCoordToId(arrayItem) {
     return stringId;
 }
 
+//  **********************
 // need to separate render ship placement from display menu...?
 const displayShipPlacementMenu = (playerName) => {
     const menuCard = document.querySelector('.menu-card');
@@ -142,7 +143,7 @@ const displayShipPlacement = (player) => {
             // console.log(`clicked ${e.target.id}`);
 
             boardObj.placeShip(shipType, startPos, endPos); //e.g 'battleship', [0,0], [4,0]
-            console.log(boardArr);
+            //console.log(boardArr);
             // recursive - pop a new ship type into placeShip function until every ship is placed
             displayShipPlacement(player);
         }
@@ -223,11 +224,27 @@ const displayShipPlacement = (player) => {
         GAME.startGamePlay();
     }
 
+    // FIX LATER: NEED TO ADJUST GETNAME FUNCTION FOR THIS TO WORK
+    // const handleResetShips = () => {
+    //     GAME.resetPlayerObjs();
+    //     GAME.startPreGame();
+    // }
+
     const startGameBtn = document.createElement('button');
-    startGameBtn.classList.add('start-btn');
+    startGameBtn.classList.add('btn','start-btn');
     startGameBtn.textContent = 'Start Game';
     startGameBtn.addEventListener('click', handleStartGameplay);
 
+    const autoShipPlacementBtn = document.createElement('button');
+    autoShipPlacementBtn.classList.add('btn');
+    autoShipPlacementBtn.textContent = 'Place ships automatically';
+    autoShipPlacementBtn.addEventListener('click', GAME.autoShipPlacement);
+
+
+    // const resetShipsBtn = document.createElement('button');
+    // resetShipsBtn.classList.add('btn');
+    // resetShipsBtn.textContent = 'Reset Ships';
+    // resetShipsBtn.addEventListener('click', handleResetShips);
 
     const outerContainer = document.querySelector('.container');
     clearChildElements(outerContainer);
@@ -255,6 +272,8 @@ const displayShipPlacement = (player) => {
     btnContainer.classList.add('btn-container');
     gameboardContainer.appendChild(btnContainer);
     btnContainer.appendChild(startGameBtn);
+    btnContainer.appendChild(autoShipPlacementBtn);
+    // btnContainer.appendChild(resetShipsBtn);    
 }
 
 // mode will be called as'pre-game' or 'player'/'enemy' strings
@@ -328,9 +347,17 @@ const renderGameLayout = () => {
     outerContainer.appendChild(enemyContainer);
 }
 
+const renderBoardUpdates = (enemyBoardArr, playerBoardArr) => {
+    renderEnemyBoard(enemyBoardArr);
+    renderPlayerBoard(playerBoardArr);
+}
+
 const renderPlayerBoard = (playerBoardArr) => {
     const playerBoard = displayBoard(playerBoardArr, 'player');
     const playerContainer = document.querySelector('.player-container');
+
+    clearChildElements(playerContainer);
+
     const playerHeading = document.createElement('h2');
     playerHeading.classList.add('board-title', 'player');
     playerHeading.textContent = 'Player board';
@@ -340,12 +367,16 @@ const renderPlayerBoard = (playerBoardArr) => {
     remainingShipCounter.textContent = 'X Ships remaining';
 
     playerContainer.appendChild(playerBoard);
-    playerContainer.appendChild(playerHeading);playerContainer.appendChild(remainingShipCounter);
+    playerContainer.appendChild(playerHeading);
+    playerContainer.appendChild(remainingShipCounter);
 }
 
 const renderEnemyBoard = (enemyBoardArr) => {
     const enemyBoard = displayBoard(enemyBoardArr, 'enemy');
     const enemyContainer = document.querySelector('.enemy-container');
+
+    clearChildElements(enemyContainer);
+
     const enemyHeading = document.createElement('h2');
     enemyHeading.classList.add('board-title', 'enemy');
 
@@ -366,6 +397,7 @@ export {
     renderMainMenu,
     displayShipPlacementMenu,
     displayShipPlacement,
+    renderBoardUpdates,
     renderEnemyBoard,
     renderGameLayout,
     renderPlayerBoard

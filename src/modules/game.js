@@ -11,8 +11,8 @@ let computer;
 
 const resetPlayerObjs = () => {
     player = Player.Player();
-    // console.log(player);
     computer = Player.Computer();
+    computer.placeShipsRandomly();
 }
 
 // Main menu - start game btn
@@ -20,6 +20,7 @@ const startGame = () => {
     DOM.renderOuterContainer();
     DOM.renderMainMenu();
     resetPlayerObjs();
+    console.log(computer.getBoardArray());
 }
 
 // PRE-GAME - take player name, ship placement
@@ -28,23 +29,34 @@ const startPreGame = () => {
     DOM.displayShipPlacement(player);
 }
 
+const autoShipPlacement = () => {
+    resetPlayerObjs();
+    player.placeShipsRandomly();
+    DOM.displayShipPlacement(player);
+}
+
 
 // Once ships placed, start game - render player and enemy boards & add player name to screen
-// - click event on grid cell to attack enemy board (get another turn if hit)
-// - receive enemy attack 
-// - repeat until all ships sunks
-
 const startGamePlay = () => {
     DOM.renderGameLayout();
     DOM.renderEnemyBoard(player.getBoardArray());
     DOM.renderPlayerBoard(computer.getBoardArray());
 }
 
+// - attack enemy board (get another turn if hit)
+
+
+// - receive enemy attack 
+
+
+// - repeat until all ships sunks
+
 
 // Victory screen / restart btn
 
 
 export {
+    autoShipPlacement,
     resetPlayerObjs,
     startPreGame,
     startGame,
