@@ -1,8 +1,5 @@
 import * as GAME from "./game";
 
-// display both the player’s boards and render them using information from the Gameboard class/factory.
-// You need methods to render the gameboards and to take user input for attacking. For attacks, let the user click on a coordinate in the enemy Gameboard.
-
 const renderOuterContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -19,7 +16,7 @@ const renderMainMenu = () => {
     const startBtnContainer = document.createElement('div');
     startBtnContainer.classList.add("start-pregame-btn-container");
     const startBtn = document.createElement('btn');
-    startBtn.classList.add('start-btn');
+    startBtn.classList.add('btn', 'start-btn');
     startBtn.textContent = 'Start game';
     outerContainer.appendChild(menuCard);
     menuCard.appendChild(title);
@@ -27,11 +24,6 @@ const renderMainMenu = () => {
     startBtnContainer.appendChild(startBtn);
     startBtn.addEventListener('click', displayNameMenu);
 }
-
-// const clearMenu = () => {
-//     const menuCard = document.querySelector('.menu-card');
-//     menuCard.innerHTML = '';
-// }
 
 // Remove child els from a parent el
 const clearChildElements = (element) => {
@@ -62,7 +54,7 @@ const displayNameMenu = (playerName) => {
         if (nameInput.value != '') {
             getName(playerName);
             //clearMenu();
-            GAME.resetPlayerObjs();
+            //GAME.resetPlayerObjs();
             GAME.startPreGame();
         }
     })
@@ -100,16 +92,6 @@ function convertCoordToId(arrayItem) {
     let newCol = String.fromCharCode(65 + col);
     let stringId = `${newRow}${newCol}`;    
     return stringId;
-}
-
-//  **********************
-// need to separate render ship placement from display menu...?
-const displayShipPlacementMenu = (playerName) => {
-    const menuCard = document.querySelector('.menu-card');
-    const title = document.createElement('h2');
-    title.textContent = `${getName(playerName)} place your ships`;
-    title.classList.add('ship-placement-title');
-    menuCard.appendChild(title);
 }
 
 const displayShipPlacement = (player) => {
@@ -236,8 +218,8 @@ const displayShipPlacement = (player) => {
     startGameBtn.addEventListener('click', handleStartGameplay);
 
     const autoShipPlacementBtn = document.createElement('button');
-    autoShipPlacementBtn.classList.add('btn');
-    autoShipPlacementBtn.textContent = 'Place ships automatically';
+    autoShipPlacementBtn.classList.add('btn', 'place-ships-btn');
+    autoShipPlacementBtn.textContent = 'Auto place';
     autoShipPlacementBtn.addEventListener('click', GAME.autoShipPlacement);
 
 
@@ -263,6 +245,18 @@ const displayShipPlacement = (player) => {
         console.log(boardArr);
     }
 
+    let instructions;
+
+    if (shipLength) { // if contains a num
+        instructions = `Place the ${shipType}. Right click to rotate.`;
+    } else {
+        instructions = `Click on start game to begin!`;
+    }
+
+    const instructionsPara = document.createElement('p');
+    instructionsPara.classList.add('instructions');
+    instructionsPara.textContent = instructions;
+
     const gameboardContainer = document.createElement('div');
     gameboardContainer.classList.add('pre-game-gameboard-container');
     outerContainer.appendChild(gameboardContainer);
@@ -270,10 +264,15 @@ const displayShipPlacement = (player) => {
 
     const btnContainer = document.createElement('div');
     btnContainer.classList.add('btn-container');
+    const btnGroup = document.createElement('div');
+    btnGroup.classList.add('btn-group');
     gameboardContainer.appendChild(btnContainer);
-    btnContainer.appendChild(startGameBtn);
-    btnContainer.appendChild(autoShipPlacementBtn);
-    // btnContainer.appendChild(resetShipsBtn);    
+    btnContainer.appendChild(instructionsPara);
+    btnContainer.appendChild(btnGroup);
+
+    btnGroup.appendChild(startGameBtn);
+    btnGroup.appendChild(autoShipPlacementBtn);
+    // btnGroup.appendChild(resetShipsBtn);    
 }
 
 // mode will be called as'pre-game' or 'player'/'enemy' strings
@@ -298,11 +297,20 @@ function displayBoard(boardArr, mode, clickCb) {
             square.classList.add('square');
             gameboard.appendChild(square);
             
-            if (mode === 'pre-game' || mode === 'game') {
+            if (mode === 'pre-game' || mode === 'player') {
                 if (typeof boardArr[i][j] === 'number') {
                     square.classList.add("ship");
-                    square.innerHTML = ":)"
+                    square.innerHTML = ":)";
                 };
+            }
+            
+            if (boardArr[i][j].toString().includes('X')) {
+                square.classList.add("hit");
+                square.innerHTML = "X";
+            } else if (boardArr[i][j].toString().includes('S')) { //******not working *******
+                square.classList.add("sunk");
+            } else if (boardArr[i][j] === 'M') {
+                square.classList.add("miss");
             }
         }
     }
@@ -324,6 +332,19 @@ function displayBoard(boardArr, mode, clickCb) {
     return gameboard;
 }
 
+const renderTurnTracker = () => {
+    const turnTrackerContainer = document.querySelector('.turn-tracker-container');
+    const turnTracker = document.createElement('h2');
+    turnTracker.classList.add('turntracker');  
+
+    // if (GAME.getTurn() === 'Player') {
+    //     return `${getName(playerName)}`;
+    // } 
+    
+    turnTracker.textContent = `${GAME.getTurn()}'s turn`;
+    clearChildElements(turnTrackerContainer);
+    turnTrackerContainer.appendChild(turnTracker);
+}
 
 const renderGameLayout = () => {
     const playerContainer = document.createElement('div');
@@ -333,17 +354,12 @@ const renderGameLayout = () => {
     const turnTrackerContainer = document.createElement('div');
     turnTrackerContainer.classList.add('turn-tracker-container');
 
-    const turnTracker = document.createElement('h2');
-    turnTracker.classList.add('turntracker');
-    turnTracker.textContent = "YOUR TURN";
     
-    
-    const outerContainer = document.querySelector('.container');
-    
+    const outerContainer = document.querySelector('.container');    
     clearChildElements(outerContainer);
     outerContainer.appendChild(playerContainer);
     outerContainer.appendChild(turnTrackerContainer);
-    turnTrackerContainer.appendChild(turnTracker);
+    renderTurnTracker();
     outerContainer.appendChild(enemyContainer);
 }
 
@@ -353,15 +369,14 @@ const renderBoardUpdates = (enemyBoardArr, playerBoardArr) => {
 }
 
 const renderPlayerBoard = (playerBoardArr) => {
-    const playerBoard = displayBoard(playerBoardArr, 'player');
     const playerContainer = document.querySelector('.player-container');
-
     clearChildElements(playerContainer);
+
+    const playerBoard = displayBoard(playerBoardArr, 'player');
 
     const playerHeading = document.createElement('h2');
     playerHeading.classList.add('board-title', 'player');
     playerHeading.textContent = 'Player board';
-
     const remainingShipCounter = document.createElement('p');
     remainingShipCounter.classList.add('ship-counter');
     remainingShipCounter.textContent = 'X Ships remaining';
@@ -372,14 +387,13 @@ const renderPlayerBoard = (playerBoardArr) => {
 }
 
 const renderEnemyBoard = (enemyBoardArr) => {
-    const enemyBoard = displayBoard(enemyBoardArr, 'enemy');
     const enemyContainer = document.querySelector('.enemy-container');
-
     clearChildElements(enemyContainer);
+    
+    const enemyBoard = displayBoard(enemyBoardArr, 'enemy', handleAttackClick);
 
     const enemyHeading = document.createElement('h2');
     enemyHeading.classList.add('board-title', 'enemy');
-
     const remainingShipCounter = document.createElement('p');
     remainingShipCounter.classList.add('ship-counter');
     remainingShipCounter.textContent = 'X Ships remaining';
@@ -390,15 +404,22 @@ const renderEnemyBoard = (enemyBoardArr) => {
     enemyContainer.appendChild(remainingShipCounter);    
 }
 
+const handleAttackClick = (e) => {
+    if (GAME.getTurn() === 'Enemy') return;
+    const position = e.target.getAttribute("id");
+    if (position === null) return;
+    const coords = parseCoords(position);
+    GAME.playerAttack(coords);
+}
 
 export {    
     displayNameMenu,
     renderOuterContainer,
     renderMainMenu,
-    displayShipPlacementMenu,
     displayShipPlacement,
     renderBoardUpdates,
     renderEnemyBoard,
     renderGameLayout,
-    renderPlayerBoard
+    renderPlayerBoard,
+    renderTurnTracker
 }

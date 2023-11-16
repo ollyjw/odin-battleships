@@ -97,7 +97,7 @@ body {
     justify-content: center;
     position:relative;
     border: 1px solid rgba(0,0,0,.125);
-    padding: 45px;
+    padding: 30px;
     margin-top: 15px;
 }
 
@@ -114,16 +114,22 @@ body {
 }
 
 .ship {
-    background-color: rgba(35, 211, 35, 0.7);
+    background-color: #23d323;
 }
 
-.btn-container {
-    display: flex; 
-    flex-direction: column;
+.hit {
+    background-color: #ff0000;
 }
 
-.start-btn {
-    background-color: rgb(59,130,246);
+.sunk {
+    background-color: #ff6a6a;
+}
+
+.miss {
+    background-color: #0a58ca;
+}
+
+.btn {    
     color: #fff;
     padding: 10px 20px;
     font-size: large;
@@ -133,10 +139,18 @@ body {
     align-self: center;
 }
 
+.start-btn {
+    background-color: rgb(59,130,246);
+}
+
 .start-btn:hover {
     background-color: #0a58ca;
     border-color: #0a53be;
     cursor: pointer;
+}
+
+.place-ships-btn {
+    background-color: #0dbc0d;
 }
 
 .title {

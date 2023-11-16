@@ -8,6 +8,7 @@ import * as DOM from './dom';
 
 let player;
 let computer;
+let turn = 'Player';
 
 const resetPlayerObjs = () => {
     player = Player.Player();
@@ -19,18 +20,18 @@ const resetPlayerObjs = () => {
 const startGame = () => {
     DOM.renderOuterContainer();
     DOM.renderMainMenu();
-    resetPlayerObjs();
-    console.log(computer.getBoardArray());
+    resetPlayerObjs();    
 }
 
 // PRE-GAME - take player name, ship placement
 const startPreGame = () => {
-    DOM.displayShipPlacementMenu(player);
+    //DOM.displayShipPlacementMenu(player);
     DOM.displayShipPlacement(player);
 }
 
 const autoShipPlacement = () => {
     resetPlayerObjs();
+    console.log(computer.getBoardArray());
     player.placeShipsRandomly();
     DOM.displayShipPlacement(player);
 }
@@ -39,24 +40,64 @@ const autoShipPlacement = () => {
 // Once ships placed, start game - render player and enemy boards & add player name to screen
 const startGamePlay = () => {
     DOM.renderGameLayout();
-    DOM.renderEnemyBoard(player.getBoardArray());
-    DOM.renderPlayerBoard(computer.getBoardArray());
+    DOM.renderPlayerBoard(player.getBoardArray());
+    DOM.renderEnemyBoard(computer.getBoardArray());
 }
 
 // - attack enemy board (get another turn if hit)
+// to be put on click event targetting coords
+const playerAttack = (coords) => {
+    // returns results of attack on enemy board with input coords - x, m, s, game over
+    const attackResult = player.attack(coords, computer.getBoardObj());
 
+    // update DOM boards with attack results
+    DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
+
+    if (attackResult === 'Game Over') {
+        // victory/defeat screen
+    } else if (attackResult === 'Miss') {
+        turn = 'Enemy';
+        enemyAttack();
+        DOM.renderTurnTracker();
+    }
+    //console.log(computer.getBoardArray())
+}
 
 // - receive enemy attack 
+const enemyAttack = (attackResult) => {
+    setTimeout(() => {
 
+        if (attackResult === 'Game Over') {
+        // victory/defeat screen
+            return;
+        } else if (attackResult === 'Miss') {
+            turn = 'Player';
+            DOM.renderTurnTracker();
+            return;
+        }
 
-// - repeat until all ships sunks
+        // Recursively call attack
+        enemyAttack(computer.randomAttack(player.getBoardObj()));        
+        
+        // update DOM boards
+        DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
 
+    }, 1000);
+}
+
+const getTurn = () => {
+    //console.log(turn);
+    return turn;
+}
+
+// TO DO: revisit sunk ships // smart attack - once enemy gets a hit it fires at surrounding coords // use getname function to print name in turntracker // reset ships button // first start game button should only gen name input once
 
 // Victory screen / restart btn
 
-
 export {
     autoShipPlacement,
+    getTurn,
+    playerAttack,
     resetPlayerObjs,
     startPreGame,
     startGame,

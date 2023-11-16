@@ -134,7 +134,7 @@ const Gameboard = () => {
         return [endRow, endCol];
     }
 
-    // takes pair of coords, determines whether the attack hit a ship and sends hit function to correct ship or records coords of missed shot
+    // takes pair of coords, determines whether the attack hit a ship and sends hit function to the correct ship or records coords of missed shot
     function receiveAttack(coords) {
         const [row, col] = coords;
         // Store value of the given board array indeces
@@ -176,6 +176,7 @@ const Gameboard = () => {
         } else {
             // board value to M for a miss
             boardArr[row][col] = 'M';
+            return 'Miss';
         }
         
     }
