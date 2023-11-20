@@ -150,35 +150,32 @@ const Gameboard = () => {
 
                 // if the board val is equal to id of ship obj
                 if (boardValue === id) {
-
                     // send hit function to that ship obj
                     const shipObj = ship[types[i]];
                     shipObj.hit();
-    
-                    // append an X to value to represent a hit
-                    boardArr[row][col] += 'X';
-    
                     // append S to represent Sunk to entire ship coords
                     if (shipObj.isSunk()) {
                         boardArr.forEach((row, r) => {
                             row.forEach((col, c) => {
                                 if (boardArr[r][c].toString().includes(id)){
-                                    boardArr[r][c] += 'S';
+                                    boardArr[r][c] = `${id}S`;
                                 }
                             })
-                        })                
-                        return 'Sunk';
-                    } 
-                    if (allShipsSunk()) return 'Game Over';
+                        })
+                    } else {
+                        // append an X to value to represent a hit
+                        boardArr[row][col] += 'X';
+                    }                    
+                    if (allShipsSunk()) return 'Game Over'; // Game over has to return before final ship sunk
+                    if (shipObj.isSunk()) return 'Sunk';
+                    return 'Hit';
                 }
             }
-
         } else {
             // board value to M for a miss
             boardArr[row][col] = 'M';
             return 'Miss';
         }
-        
     }
     // The every() method of Array instances tests whether all elements in the array pass the test implemented by the provided function. It returns a Boolean value.
     const allShipsSunk = () => shipsArr.every((ship) => ship.isSunk());

@@ -25,7 +25,7 @@ const renderMainMenu = () => {
     startBtn.addEventListener('click', displayNameMenu);
 }
 
-// Remove child els from a parent el
+// Remove child els from a parent el & returns removed node - e.g. outercontainer
 const clearChildElements = (element) => {
     while (element.firstChild) {
         element.removeChild(element.lastChild);
@@ -307,7 +307,7 @@ function displayBoard(boardArr, mode, clickCb) {
             if (boardArr[i][j].toString().includes('X')) {
                 square.classList.add("hit");
                 square.innerHTML = "X";
-            } else if (boardArr[i][j].toString().includes('S')) { //******not working *******
+            } else if (boardArr[i][j].toString().includes('S')) {
                 square.classList.add("sunk");
             } else if (boardArr[i][j] === 'M') {
                 square.classList.add("miss");
@@ -412,6 +412,46 @@ const handleAttackClick = (e) => {
     GAME.playerAttack(coords);
 }
 
+const renderVictoryScreen = (winner) => {
+    const modal = document.createElement('div');
+    modal.classList.add('game-over-modal');
+    const btnGroup = document.createElement('div');
+    btnGroup.classList.add('btn-group');
+    const playAgainBtn = document.createElement('button');
+    playAgainBtn.classList.add('btn', 'play-again-btn');
+    playAgainBtn.textContent = 'Play again';
+    const returnToMenuBtn = document.createElement('button');
+    returnToMenuBtn.classList.add('btn', 'return-menu-btn');
+    returnToMenuBtn.textContent = 'Return to menu';
+    playAgainBtn.addEventListener('click', GAME.playAgain);
+    returnToMenuBtn.addEventListener('click', handleReturnToMenu);
+    
+    const header = document.createElement('h2');
+    const para = document.createElement('p');
+    if (winner === 'Player') {
+        header.textContent = `You win!`;
+        para.textContent = `Congratulations! Want to play another round?`;
+    } else {
+        header.textContent = `You lose`;
+        para.textContent = `Better luck next time. Want to try again?`;
+    }
+
+    const outerContainer = document.querySelector('.container');
+    outerContainer.appendChild(modal);
+    modal.appendChild(header);
+    modal.appendChild(para);
+    modal.appendChild(btnGroup);
+    btnGroup.appendChild(returnToMenuBtn);
+    btnGroup.appendChild(playAgainBtn);
+    
+}
+
+const handleReturnToMenu = () => {
+    const body = document.querySelector('body');
+    clearChildElements(body);
+    GAME.startGame();
+}
+
 export {    
     displayNameMenu,
     renderOuterContainer,
@@ -421,5 +461,6 @@ export {
     renderEnemyBoard,
     renderGameLayout,
     renderPlayerBoard,
-    renderTurnTracker
+    renderTurnTracker,
+    renderVictoryScreen
 }

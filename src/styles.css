@@ -139,8 +139,12 @@ body {
     align-self: center;
 }
 
+.btn:hover {
+    cursor: pointer;
+}
+
 .start-btn {
-    background-color: rgb(59,130,246);
+    background-color: #3b82f6;
 }
 
 .start-btn:hover {
@@ -196,4 +200,35 @@ body {
     padding: 15px;
     width: 200px;
     text-align: center;    
+}
+
+.game-over-modal {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    z-index: 1;
+    display: block;
+    padding: 45px;
+    background-color: rgba(255,255,255,0.8);
+}
+
+.game-over-modal h2 {
+    margin-top: 0;
+}
+
+.return-menu-btn {
+    background-color: #3b82f6;
+}
+.return-menu-btn:hover {
+    background-color: #0a58ca;
+    border-color: #0a53be;
+}
+
+.play-again-btn {
+    background-color: #0dbc0d;
+}
+.play-again-btn:hover {
+    background-color: #0d8d0d;
 }
