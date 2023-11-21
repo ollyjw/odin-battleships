@@ -4,10 +4,15 @@ const renderOuterContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
     document.body.appendChild(container);
+    const boardsContainer = document.createElement('div');
+    boardsContainer.classList.add('boards-container');
+    container.appendChild(boardsContainer);
 }
 
 const renderMainMenu = () => {
     const outerContainer = document.querySelector('.container');
+    const menuContainer = document.createElement('div');
+    menuContainer.classList.add('menu-container');
     const menuCard = document.createElement('div');
     menuCard.classList.add('menu-card');
     const title = document.createElement('h2');
@@ -15,25 +20,33 @@ const renderMainMenu = () => {
     title.textContent = "Battleships";
     const startBtnContainer = document.createElement('div');
     startBtnContainer.classList.add("start-pregame-btn-container");
-    const startBtn = document.createElement('btn');
+    const startBtn = document.createElement('button');
     startBtn.classList.add('btn', 'start-btn');
-    startBtn.textContent = 'Start game';
-    outerContainer.appendChild(menuCard);
+    startBtn.id = "start";
+    startBtn.textContent = 'Start game';    
+    outerContainer.appendChild(menuContainer);    
+    menuContainer.appendChild(menuCard);
     menuCard.appendChild(title);
     menuCard.appendChild(startBtnContainer);
     startBtnContainer.appendChild(startBtn);
     startBtn.addEventListener('click', displayNameMenu);
 }
 
-// Remove child els from a parent el & returns removed node - e.g. outercontainer
-const clearChildElements = (element) => {
-    while (element.firstChild) {
-        element.removeChild(element.lastChild);
-    }
+const hideMenu = () => {
+    const menuContainer = document.querySelector('.menu-container');
+    menuContainer.classList.add('d-none');
 }
 
-const displayNameMenu = (playerName) => {
-    const menuCard = document.querySelector('.menu-card');    
+const getName = () => {
+    let playerName = document.getElementById('name-input').value;
+    if (playerName === "") {
+        playerName = 'Admiral one';
+    }
+    return playerName;
+}
+
+const displayNameMenu = () => {
+    const menuCard = document.querySelector('.menu-card');
     const askNameContainer = document.createElement('div');    
     askNameContainer.classList.add('ask-name-container');
     menuCard.appendChild(askNameContainer);
@@ -52,18 +65,19 @@ const displayNameMenu = (playerName) => {
     nameSubmit.addEventListener('click',(e) => {
         e.preventDefault();
         if (nameInput.value != '') {
-            getName(playerName);
-            //clearMenu();
-            //GAME.resetPlayerObjs();
+            getName();
             GAME.startPreGame();
+            hideMenu();
         }
     })
+    document.getElementById('start').disabled = true;
 }
 
-const getName = (playerName) => {
-    const nameInputValue = document.getElementById('name-input').value;
-    playerName = nameInputValue;
-    return playerName;
+// Remove child els from a parent el & returns removed node - e.g. outercontainer
+const clearChildElements = (element) => {
+    while (element.firstChild) {
+        element.removeChild(element.lastChild);
+    }
 }
 
 // takes input square id string - returns board array indeces e.g. '10A' = [9,0]
@@ -206,11 +220,12 @@ const displayShipPlacement = (player) => {
         GAME.startGamePlay();
     }
 
-    // FIX LATER: NEED TO ADJUST GETNAME FUNCTION FOR THIS TO WORK
-    // const handleResetShips = () => {
-    //     GAME.resetPlayerObjs();
-    //     GAME.startPreGame();
-    // }
+    //FIX LATER: NEED TO ADJUST GETNAME FUNCTION FOR THIS TO WORK
+    const handleResetShips = () => {
+        console.clear();
+        GAME.resetPlayerObjs();
+        GAME.startPreGame();
+    }
 
     const startGameBtn = document.createElement('button');
     startGameBtn.classList.add('btn','start-btn');
@@ -222,14 +237,15 @@ const displayShipPlacement = (player) => {
     autoShipPlacementBtn.textContent = 'Auto place';
     autoShipPlacementBtn.addEventListener('click', GAME.autoShipPlacement);
 
-
-    // const resetShipsBtn = document.createElement('button');
-    // resetShipsBtn.classList.add('btn');
-    // resetShipsBtn.textContent = 'Reset Ships';
-    // resetShipsBtn.addEventListener('click', handleResetShips);
+    const resetShipsBtn = document.createElement('button');
+    resetShipsBtn.classList.add('btn', 'reset-btn');
+    resetShipsBtn.textContent = 'Reset Ships';
+    resetShipsBtn.addEventListener('click', handleResetShips);
 
     const outerContainer = document.querySelector('.container');
-    clearChildElements(outerContainer);
+    const boardsContainer = document.querySelector('.boards-container');
+    
+    clearChildElements(boardsContainer);    
 
     let gameboard;
 
@@ -241,8 +257,7 @@ const displayShipPlacement = (player) => {
         gameboard.addEventListener('mouseout', handlePlaceShipMouseLeave);
         gameboard.addEventListener('contextmenu', rotateDirection);
     } else { //render board without events
-        gameboard = displayBoard(boardArr, 'pre-game');
-        console.log(boardArr);
+        gameboard = displayBoard(boardArr, 'pre-game');        
     }
 
     let instructions;
@@ -259,7 +274,8 @@ const displayShipPlacement = (player) => {
 
     const gameboardContainer = document.createElement('div');
     gameboardContainer.classList.add('pre-game-gameboard-container');
-    outerContainer.appendChild(gameboardContainer);
+    outerContainer.appendChild(boardsContainer);
+    boardsContainer.appendChild(gameboardContainer);
     gameboardContainer.appendChild(gameboard);   
 
     const btnContainer = document.createElement('div');
@@ -270,9 +286,9 @@ const displayShipPlacement = (player) => {
     btnContainer.appendChild(instructionsPara);
     btnContainer.appendChild(btnGroup);
 
-    btnGroup.appendChild(startGameBtn);
     btnGroup.appendChild(autoShipPlacementBtn);
-    // btnGroup.appendChild(resetShipsBtn);    
+    btnGroup.appendChild(resetShipsBtn);    
+    btnGroup.appendChild(startGameBtn);
 }
 
 // mode will be called as'pre-game' or 'player'/'enemy' strings
@@ -337,11 +353,11 @@ const renderTurnTracker = () => {
     const turnTracker = document.createElement('h2');
     turnTracker.classList.add('turntracker');  
 
-    // if (GAME.getTurn() === 'Player') {
-    //     return `${getName(playerName)}`;
-    // } 
-    
     turnTracker.textContent = `${GAME.getTurn()}'s turn`;
+    if (GAME.getTurn() === 'Player') {
+        turnTracker.textContent = `${getName()}'s turn`;
+    } 
+    
     clearChildElements(turnTrackerContainer);
     turnTrackerContainer.appendChild(turnTracker);
 }
@@ -355,12 +371,12 @@ const renderGameLayout = () => {
     turnTrackerContainer.classList.add('turn-tracker-container');
 
     
-    const outerContainer = document.querySelector('.container');    
-    clearChildElements(outerContainer);
-    outerContainer.appendChild(playerContainer);
-    outerContainer.appendChild(turnTrackerContainer);
+    const boardsContainer = document.querySelector('.boards-container');    
+    clearChildElements(boardsContainer);
+    boardsContainer.appendChild(playerContainer);
+    boardsContainer.appendChild(turnTrackerContainer);
     renderTurnTracker();
-    outerContainer.appendChild(enemyContainer);
+    boardsContainer.appendChild(enemyContainer);
 }
 
 const renderBoardUpdates = (enemyBoardArr, playerBoardArr) => {
@@ -437,6 +453,7 @@ const renderVictoryScreen = (winner) => {
     }
 
     const outerContainer = document.querySelector('.container');
+    clearChildElements(outerContainer);
     outerContainer.appendChild(modal);
     modal.appendChild(header);
     modal.appendChild(para);
