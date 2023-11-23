@@ -143,7 +143,6 @@ const Gameboard = () => {
         const coordsContainShip = typeof boardValue === 'number';
 
         if (coordsContainShip) {
-            const types = Object.keys(ship); // ['carrier', 'battleship', etc]
             for (let i = 0; types.length > i; i++) { 
                 // grab id from ship props
                 const { id } = ship[types[i]];
@@ -167,14 +166,14 @@ const Gameboard = () => {
                         boardArr[row][col] += 'X';
                     }                    
                     if (allShipsSunk()) return 'Game Over'; // Game over has to return before final ship sunk
-                    if (shipObj.isSunk()) return 'Sunk';
-                    return 'Hit';
+                    if (shipObj.isSunk()) return 'sunk';
+                    return 'hit';
                 }
             }
         } else {
             // board value to M for a miss
             boardArr[row][col] = 'M';
-            return 'Miss';
+            return 'miss';
         }
     }
     // The every() method of Array instances tests whether all elements in the array pass the test implemented by the provided function. It returns a Boolean value.
