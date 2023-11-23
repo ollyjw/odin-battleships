@@ -32,9 +32,12 @@ const renderMainMenu = () => {
     startBtn.addEventListener('click', displayNameMenu);
 }
 
-const hideMenu = () => {
-    const menuContainer = document.querySelector('.menu-container');
-    menuContainer.classList.add('d-none');
+const hideElement = (element) => {
+    element.classList.add('d-none');
+}
+
+const revealElement = (element) => {
+    element.classList.remove('d-none');
 }
 
 const getName = () => {
@@ -46,6 +49,7 @@ const getName = () => {
 }
 
 const displayNameMenu = () => {
+    const menuContainer = document.querySelector('.menu-container');
     const menuCard = document.querySelector('.menu-card');
     const askNameContainer = document.createElement('div');    
     askNameContainer.classList.add('ask-name-container');
@@ -67,7 +71,7 @@ const displayNameMenu = () => {
         if (nameInput.value != '') {
             getName();
             GAME.startPreGame();
-            hideMenu();
+            hideElement(menuContainer);
         }
     })
     document.getElementById('start').disabled = true;
@@ -220,7 +224,6 @@ const displayShipPlacement = (player) => {
         GAME.startGamePlay();
     }
 
-    //FIX LATER: NEED TO ADJUST GETNAME FUNCTION FOR THIS TO WORK
     const handleResetShips = () => {
         console.clear();
         GAME.resetPlayerObjs();
@@ -245,7 +248,8 @@ const displayShipPlacement = (player) => {
     const outerContainer = document.querySelector('.container');
     const boardsContainer = document.querySelector('.boards-container');
     
-    clearChildElements(boardsContainer);    
+    revealElement(boardsContainer);
+    clearChildElements(boardsContainer); 
 
     let gameboard;
 
@@ -369,7 +373,6 @@ const renderGameLayout = () => {
     enemyContainer.classList.add("enemy-container");
     const turnTrackerContainer = document.createElement('div');
     turnTrackerContainer.classList.add('turn-tracker-container');
-
     
     const boardsContainer = document.querySelector('.boards-container');    
     clearChildElements(boardsContainer);
@@ -439,7 +442,7 @@ const renderVictoryScreen = (winner) => {
     const returnToMenuBtn = document.createElement('button');
     returnToMenuBtn.classList.add('btn', 'return-menu-btn');
     returnToMenuBtn.textContent = 'Return to menu';
-    playAgainBtn.addEventListener('click', GAME.playAgain);
+    playAgainBtn.addEventListener('click', handlePlayAgain);
     returnToMenuBtn.addEventListener('click', handleReturnToMenu);
     
     const header = document.createElement('h2');
@@ -453,7 +456,8 @@ const renderVictoryScreen = (winner) => {
     }
 
     const outerContainer = document.querySelector('.container');
-    clearChildElements(outerContainer);
+    const boardsContainer = document.querySelector('.boards-container');
+    hideElement(boardsContainer);
     outerContainer.appendChild(modal);
     modal.appendChild(header);
     modal.appendChild(para);
@@ -463,11 +467,22 @@ const renderVictoryScreen = (winner) => {
     
 }
 
+const removeModal = () => {
+    const modal = document.querySelector('.game-over-modal');
+    modal.remove();
+}
+
 const handleReturnToMenu = () => {
     const body = document.querySelector('body');
     clearChildElements(body);
     GAME.startGame();
 }
+
+const handlePlayAgain = () => {
+    removeModal();
+    GAME.playAgain();
+}
+
 
 export {    
     displayNameMenu,

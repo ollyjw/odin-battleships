@@ -92,6 +92,8 @@ const getTurn = () => {
 // TO DO: 
 // - smart attack - once enemy gets a hit it fires at surrounding coords 
 // commentary message box eg "E1 was a miss", "sunk your battleship" etc
+// Fill in X ships remaining
+// tidy up DOM.js - anyhting nonDOM like parsecoord to own page
 
 // Victory screen / restart btn
 const declareWinner = (winner) => {
