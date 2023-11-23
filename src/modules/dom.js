@@ -1,4 +1,5 @@
 import * as GAME from "./game";
+import { parseCoords, convertCoordToId } from "./utility/parseCoords";
 
 const renderOuterContainer = () => {
     const container = document.createElement('div');
@@ -36,8 +37,12 @@ const hideElement = (element) => {
     element.classList.add('d-none');
 }
 
-const revealElement = (element) => {
-    element.classList.remove('d-none');
+const blurElement = (element) => {
+    element.classList.add('blur');
+}
+
+const removeBlur = (element) => {
+    element.classList.remove('blur');
 }
 
 const getName = () => {
@@ -84,34 +89,6 @@ const clearChildElements = (element) => {
     }
 }
 
-// takes input square id string - returns board array indeces e.g. '10A' = [9,0]
-function parseCoords(squareId) {
-    let row;
-    let col;
-
-    if (squareId.length === 2) {
-        // first character (row num) on sqr id will be +1 ahead of array index
-        row = parseInt(squareId.charAt(0)) -1;
-        // second character (col letter) will be translated from A-J to 0-9
-        col = squareId.charCodeAt(1) - 65;
-    } else { // sqr id string is 3 characters
-        const firstTwoChars = squareId.slice(0,2);
-        row = parseInt(firstTwoChars) - 1;
-        // third character convert to num
-        col = squareId.charCodeAt(2) - 65;
-    }
-    return [row, col];
-}
-
-// take array input nums and convert it to square id string - [9,0] = '10A'
-function convertCoordToId(arrayItem) {
-    const [row, col] = arrayItem;
-    let newRow = row + 1;
-    let newCol = String.fromCharCode(65 + col);
-    let stringId = `${newRow}${newCol}`;    
-    return stringId;
-}
-
 const displayShipPlacement = (player) => {
     const boardObj = player.getBoardObj();
     const boardArr = player.getBoardArray();    
@@ -139,11 +116,7 @@ const displayShipPlacement = (player) => {
 
         // if coords are empty & within board boundaries
         if (validShipPlacement) {
-            // console.log(`Current ship is: ${shipType} length is ${shipLength} squares`);
-            // console.log(`clicked ${e.target.id}`);
-
             boardObj.placeShip(shipType, startPos, endPos); //e.g 'battleship', [0,0], [4,0]
-            //console.log(boardArr);
             // recursive - pop a new ship type into placeShip function until every ship is placed
             displayShipPlacement(player);
         }
@@ -189,9 +162,6 @@ const displayShipPlacement = (player) => {
         const allCoords = boardObj.getAllCoords(startPos, endPos);
         // if coords are empty & within board boundaries
         const validShipPlacement = boardObj.canPlaceShipBetween(startPos, endPos);
-
-        //console.log(`${shipType} (${shipLength} squares): Start pos:${startPos} End pos: ${endPos}`);
-        // console.clear();
 
         allCoords.forEach((coord) => {
             //console.log(coord);
@@ -248,13 +218,12 @@ const displayShipPlacement = (player) => {
     const outerContainer = document.querySelector('.container');
     const boardsContainer = document.querySelector('.boards-container');
     
-    revealElement(boardsContainer);
+    removeBlur(boardsContainer);
     clearChildElements(boardsContainer); 
 
     let gameboard;
 
-    // if shiplength contains a number / isnt undefined
-    // i.e. if ships still needs to be placed add click event
+    // if shiplength contains a number / isnt undefined. i.e. if ships still needs to be placed add click event
     if (shipLength !== undefined) {
         gameboard = displayBoard(boardArr, 'pre-game', placeShipClick);
         gameboard.addEventListener('mouseover', handlePlaceShipMouseEnter);
@@ -355,15 +324,22 @@ function displayBoard(boardArr, mode, clickCb) {
 const renderTurnTracker = () => {
     const turnTrackerContainer = document.querySelector('.turn-tracker-container');
     const turnTracker = document.createElement('h2');
-    turnTracker.classList.add('turntracker');  
+    turnTracker.classList.add('turntracker'); 
+    const commentContainer = document.createElement('div');
+    commentContainer.classList.add('comment-container');
+    const commentBox = document.createElement('p');
+    commentBox.classList.add('comment-box');
 
     turnTracker.textContent = `${GAME.getTurn()}'s turn`;
     if (GAME.getTurn() === 'Player') {
         turnTracker.textContent = `${getName()}'s turn`;
     } 
-    
+
+    commentBox.textContent = `${GAME.getResult()}`;
     clearChildElements(turnTrackerContainer);
     turnTrackerContainer.appendChild(turnTracker);
+    turnTrackerContainer.appendChild(commentContainer);
+    commentContainer.appendChild(commentBox);
 }
 
 const renderGameLayout = () => {
@@ -372,7 +348,7 @@ const renderGameLayout = () => {
     const enemyContainer = document.createElement('div');
     enemyContainer.classList.add("enemy-container");
     const turnTrackerContainer = document.createElement('div');
-    turnTrackerContainer.classList.add('turn-tracker-container');
+    turnTrackerContainer.classList.add('turn-tracker-container');    
     
     const boardsContainer = document.querySelector('.boards-container');    
     clearChildElements(boardsContainer);
@@ -457,14 +433,13 @@ const renderVictoryScreen = (winner) => {
 
     const outerContainer = document.querySelector('.container');
     const boardsContainer = document.querySelector('.boards-container');
-    hideElement(boardsContainer);
+    blurElement(boardsContainer);
     outerContainer.appendChild(modal);
     modal.appendChild(header);
     modal.appendChild(para);
     modal.appendChild(btnGroup);
     btnGroup.appendChild(returnToMenuBtn);
-    btnGroup.appendChild(playAgainBtn);
-    
+    btnGroup.appendChild(playAgainBtn);    
 }
 
 const removeModal = () => {
@@ -482,7 +457,6 @@ const handlePlayAgain = () => {
     removeModal();
     GAME.playAgain();
 }
-
 
 export {    
     displayNameMenu,
