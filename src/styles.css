@@ -4,6 +4,7 @@ body {
 
 .container,
 .boards-container {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -178,6 +179,7 @@ body {
 .turn-tracker-container {
     display: flex;
     align-items: center;
+    flex-direction: column;
 }
 
 .turntracker {
@@ -188,8 +190,16 @@ body {
     text-align: center;    
 }
 
+.comment-container {
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+}
+
 .game-over-modal {
-    position: relative;
+    position: absolute;
     top: auto;
     right: auto;
     bottom: auto;
@@ -199,6 +209,7 @@ body {
     padding: 45px;
     background-color: rgba(255,255,255,0.8);
     text-align: center;
+    border: 4px solid #000344;
 }
 
 .game-over-modal h2 {
@@ -222,6 +233,10 @@ body {
 
 .d-none {
     display: none;
+}
+
+.blur {
+    filter: blur(2px);
 }
 
 
