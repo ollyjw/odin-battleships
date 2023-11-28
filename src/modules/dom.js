@@ -1,5 +1,6 @@
 import * as GAME from "./game";
 import { parseCoords, convertCoordToId } from "./utility/parseCoords";
+import { getName } from "./utility/getName";
 
 const renderOuterContainer = () => {
     const container = document.createElement('div');
@@ -43,14 +44,6 @@ const blurElement = (element) => {
 
 const removeBlur = (element) => {
     element.classList.remove('blur');
-}
-
-const getName = () => {
-    let playerName = document.getElementById('name-input').value;
-    if (playerName === "") {
-        playerName = 'Admiral one';
-    }
-    return playerName;
 }
 
 const displayNameMenu = () => {
@@ -236,7 +229,7 @@ const displayShipPlacement = (player) => {
     let instructions;
 
     if (shipLength) { // if contains a num
-        instructions = `Place the ${shipType}. Right click to rotate.`;
+        instructions = `Place the ${shipType}, ${getName()}. Right click to rotate.`;
     } else {
         instructions = `Click on start game to begin!`;
     }
