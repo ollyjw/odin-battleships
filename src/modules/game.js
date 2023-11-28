@@ -1,9 +1,12 @@
 import * as Player from '../factories/player';
+import Ship from '../factories/ship';
 import * as DOM from './dom';
+import { convertCoordToId } from "./utility/parseCoords";
 
 let player;
 let computer;
 let turn = 'Player';
+let resultString;
 
 const resetPlayerObjs = () => {
     player = Player.Player();
@@ -43,45 +46,82 @@ const playerAttack = (coords) => {
     // returns results of attack on enemy board with input coords - x, m, s, game over
     const attackResult = player.attack(coords, computer.getBoardObj());
 
+    const [row, col] = coords;
+    const boardVal = computer.getBoardObj().getArray()[row][col];
+
     // update DOM boards with attack results
     DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
 
     if (attackResult === 'Game Over') {
-        // victory/defeat screen
-        declareWinner('Player');
-    } else if (attackResult === 'Miss') {
+        declareWinner('Player'); // victory/defeat screen
+    } else if (attackResult === 'miss') {
+        resultString = `${convertCoordToId(coords)} was a ${attackResult}`;
         turn = 'Enemy';
         enemyAttack();
         DOM.renderTurnTracker();
+    } else if (attackResult === 'hit') {
+        resultString = `${convertCoordToId(coords)} was a ${attackResult}! Take another shot`;
+        DOM.renderTurnTracker();
+    } else if (attackResult === 'sunk') {
+        for (let i = 0; computer.getShipList().length > i; i++) {
+            let shipType = computer.getShipList()[i];
+            // boardval includes ship class id
+            if (boardVal.includes(Ship(shipType).id)) {
+                resultString = `You ${attackResult} their ${shipType}! Take another shot`;
+            }
+        }
+        DOM.renderTurnTracker();        
     }
-
-    console.log(`Player's shot is a ${attackResult}`);
-    // console.log(computer.getBoardObj().allShipsSunk());
-    //console.log(player.getBoardObj().allShipsSunk());
-    //console.log(computer.getBoardArray())
+    return attackResult;
 }
 
 // - receive enemy attack 
-const enemyAttack = (attackResult) => {
+const enemyAttack = (attackResult) => { 
+    
     setTimeout(() => {
-
-        if (attackResult === 'Game Over') {
-            // victory/defeat screen
-            declareWinner('Computer');
+        if (attackResult === 'Game Over') {           
+            declareWinner('Computer'); // victory/defeat screen
             return;
-        } else if (attackResult === 'Miss') {
+        } else if (attackResult === 'miss') {
             turn = 'Player';
+            resultString = `Computer's shot on ${convertCoordToId(computer.getCoords())} was a ${attackResult}`;
             DOM.renderTurnTracker();
             return;
-        }
+        } else if (attackResult === 'hit') {
+            resultString = `Computer's shot on ${convertCoordToId(computer.getCoords())} was a ${attackResult}`;
+            DOM.renderTurnTracker();
+        } 
+        // else if (attackResult === 'sunk') {
+        //     resultString = `Ship has been ${attackResult}!`;
+        //     DOM.renderTurnTracker();
+        // }
 
-        // Recursively call attack
-        enemyAttack(computer.randomAttack(player.getBoardObj()));  
-        // console.log(`Computer's shot is a ${attackResult}`);
+        // Recursively call attack - random attack returns attackResult
+        enemyAttack(computer.randomAttack(player.getBoardObj()));
+
+        // NB: getCoords function will only work after randomAttack is called
+        console.log(computer.getCoords());
+        const [row, col] = computer.getCoords();
+        const boardVal = player.getBoardObj().getArray()[row][col];
+
+        console.log(boardVal);
+            
+        if (attackResult === 'sunk') { // Not currently working
+            for (let i = 0; player.getShipList().length > i; i++) {
+                let shipType = player.getShipList()[i];
+                // if boardval includes ship class id
+                if (boardVal.includes(Ship(shipType).id)) {
+                    resultString = `Your ${shipType} has been ${attackResult}!`;
+                    console.log(resultString);
+                }
+            }
+            DOM.renderTurnTracker();
+        }
         
         // update DOM boards
         DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
 
+        return attackResult;
     }, 700);
 }
 
@@ -89,11 +129,12 @@ const getTurn = () => {
     return turn;
 }
 
-// TO DO: 
-// - smart attack - once enemy gets a hit it fires at surrounding coords 
-// commentary message box eg "E1 was a miss", "sunk your battleship" etc
-// Fill in X ships remaining
-// tidy up DOM.js - anyhting nonDOM like parsecoord to own page
+const getResult = () => {
+    if (resultString === undefined) {
+        resultString = 'Fire when ready!';
+    }
+    return resultString;
+}
 
 // Victory screen / restart btn
 const declareWinner = (winner) => {
@@ -101,12 +142,14 @@ const declareWinner = (winner) => {
 }
 
 const playAgain = () => {
+    resultString = 'Fire when ready!';
     resetPlayerObjs();
     startPreGame();
 }
 
 export {
     autoShipPlacement,
+    getResult,
     getTurn,
     playAgain,
     playerAttack,
@@ -115,3 +158,8 @@ export {
     startGame,
     startGamePlay
 }
+
+// TO DO: 
+// - Fix enemy attack sunk message
+// - smart attack - once enemy gets a hit it fires at surrounding coords 
+// Fill in X ships remaining

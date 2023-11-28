@@ -87,16 +87,22 @@ const Player = () => {
 // Inherit from Player factory
 const Computer = () => {
     const proto = Player();
+    let randomCoords;
 
     function randomAttack(enemyBoard) {
-        let randomCoords = proto.genRandomCoords();
+        randomCoords = proto.genRandomCoords();
         const attackedCoord = proto.attack(randomCoords, enemyBoard);
         return attackedCoord;
     }
 
+    function getCoords() {
+        return randomCoords;
+    }
+
     return {
+        getCoords,
         ...proto,
-        randomAttack
+        randomAttack,
     }
 }
 
