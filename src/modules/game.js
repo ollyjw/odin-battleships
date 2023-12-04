@@ -97,22 +97,19 @@ const enemyAttack = (attackResult) => {
         // }
 
         // Recursively call attack - random attack returns attackResult
-        enemyAttack(computer.randomAttack(player.getBoardObj()));
+        enemyAttack(computer.smartAttack(player.getBoardObj()));
 
         // NB: getCoords function will only work after randomAttack is called
-        console.log(computer.getCoords());
         const [row, col] = computer.getCoords();
         const boardVal = player.getBoardObj().getArray()[row][col];
-
-        console.log(boardVal);
-            
+           
         if (attackResult === 'sunk') { // Not currently working
             for (let i = 0; player.getShipList().length > i; i++) {
                 let shipType = player.getShipList()[i];
                 // if boardval includes ship class id
                 if (boardVal.includes(Ship(shipType).id)) {
                     resultString = `Your ${shipType} has been ${attackResult}!`;
-                    console.log(resultString);
+                    // console.log(resultString);
                 }
             }
             DOM.renderTurnTracker();
@@ -161,5 +158,5 @@ export {
 
 // TO DO: 
 // - Fix enemy attack sunk message
-// - smart attack - once enemy gets a hit it fires at surrounding coords 
 // Fill in X ships remaining
+// fix smart attack linear targets logic - 2 hits next to each other arent necessarily the same ship

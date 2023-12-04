@@ -157,10 +157,8 @@ const displayShipPlacement = (player) => {
         const validShipPlacement = boardObj.canPlaceShipBetween(startPos, endPos);
 
         allCoords.forEach((coord) => {
-            //console.log(coord);
-            if (boardObj.areWithinBoard(coord)) {
+            if (boardObj.areCoordsWithinBoard(coord)) {
                 let idString = convertCoordToId(coord);
-                //console.log(`id string is: ${idString}, coord is ${coord}`);   
                 if (validShipPlacement) {
                     document.getElementById(`${idString}`).classList.add('valid-ship-placement');
                 } else {

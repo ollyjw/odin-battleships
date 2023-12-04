@@ -184,14 +184,14 @@ const Gameboard = () => {
     function canPlaceShipBetween(startPos, endPos) {
         const allCoords = getAllCoords(startPos, endPos);
         return allCoords.every((coord) => {
-            if (areWithinBoard(coord) && areEmpty(coord)) {
+            if (areCoordsWithinBoard(coord) && areCoordsEmpty(coord)) {
                 return true;
             }
         })
     }
 
     // Check if coords are within board boundaries
-    function areWithinBoard(coords) {
+    function areCoordsWithinBoard(coords) {
         const [row, col] = coords;
         if (row >= 10 || row < 0 || col >= 10 || col <  0) {
             return false;
@@ -201,7 +201,7 @@ const Gameboard = () => {
     }
 
     // Check if coords are empty
-    function areEmpty(coords) {
+    function areCoordsEmpty(coords) {
         const [row, col] = coords;
         if (boardArr[row][col] === '') {
             return true;
@@ -210,19 +210,121 @@ const Gameboard = () => {
         }
     }
 
+    function areCoordsUnplayed(coords) {
+        const [row, col] = coords;
+        if (boardArr[row][col] === '' || typeof boardArr[row][col] === 'number') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // if coords both empty & within board boundaries return true
+    function areCoordsEmptyWithinBoard(coords) {
+        if (!areCoordsWithinBoard(coords)) return false;
+        if (!areCoordsEmpty) return false;
+        return true;
+    }
+
+    function areCoordsMiss(coords) {
+        const [row, col] = coords;
+        if (boardArr[row][col] === 'M') {
+            return true;
+        } else {
+            return false;
+        }
+    }    
+    
     function getArray() {
         return boardArr;
     }
 
+    // Take a coord and get all empty coords within board that are above, below, left & right of coord
+    function getAllValidAdjacentCoords(coords, boardObj) {
+        const [row, col]= coords;
+        const possibleMoves = [];
+        
+        possibleMoves.push([row + 1, col]);
+        possibleMoves.push([row - 1, col]);
+        possibleMoves.push([row, col + 1]);
+        possibleMoves.push([row, col - 1]);
+
+        // The filter() method of Array instances creates a shallow copy of a portion of a given array, filtered down to just the elements from the given array that pass the test implemented by the provided function.
+        // filter out coords that are empty or outside board
+        const validMoves = possibleMoves.filter(coord => {
+            return !boardObj ? areCoordsEmptyWithinBoard(coord): boardObj.areCoordsEmptyWithinBoard(coord);
+        });
+
+        return validMoves;
+    }
+
+    // take 2 coords and return all valid coords along same axis 
+    function getAllValidLinearCoords(startPos, endPos) {
+        const linearTargets = [];
+        const [startRow, startCol] = startPos;
+        const [endRow, endCol] = endPos;
+        let coord;
+
+        if (endRow === startRow) { //same row
+            let currentCol = startCol;
+            // Loop in positive and negative direction along rows, add empty coords to targets array and break out if coords are outside board boundaries or a missed shot
+            while (true) {
+                coord = [startRow, currentCol++];
+                if (!areCoordsWithinBoard(coord)) break; // break statement terminates current loop
+                if (areCoordsMiss(coord)) break;
+                if (areCoordsUnplayed(coord)) {
+                    linearTargets.push(coord);
+                    break;
+                }
+            }
+            currentCol = startCol;
+            while (true) {
+                coord = [startRow, currentCol--];
+                if (!areCoordsWithinBoard(coord)) break;
+                if (areCoordsMiss(coord)) break;
+                if (areCoordsUnplayed(coord)) {
+                    linearTargets.push(coord);
+                    break;
+                }
+            }
+        } else { // same column
+            let currentRow = startRow;
+            // Loop in positive and negative direction along columns
+            while (true) {
+                coord = [currentRow++, startCol];
+                if (!areCoordsWithinBoard(coord)) break;
+                if (areCoordsMiss(coord)) break;
+                if (areCoordsUnplayed(coord)) {
+                    linearTargets.push(coord);
+                    break;
+                }
+            }
+            currentRow = startRow;
+            while (true) {
+                coord = [currentRow--, startCol];
+                if (!areCoordsWithinBoard(coord)) break;
+                if (areCoordsMiss(coord)) break;
+                if (areCoordsUnplayed(coord)) {
+                    linearTargets.push(coord);
+                    break;
+                }
+            }
+        }
+        return linearTargets;
+    }
+
     return { 
         allShipsSunk,
-        areWithinBoard,
+        areCoordsEmptyWithinBoard,
+        areCoordsWithinBoard,
         canPlaceShipBetween,
         createBoardArray,
         createShipLengthArray,
         getAllCoords,
         getAllNumsBetween,
         getArray,
+        getAllValidAdjacentCoords,
+        getAllValidLinearCoords,
         getEndCoord,
         getShipTypes,
         placeShip,

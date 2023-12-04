@@ -89,10 +89,69 @@ const Computer = () => {
     const proto = Player();
     let randomCoords;
 
+    const hitCoords = [];
+    const adjacentTargets = [];
+    const linearTargets = [];
+
+    function clearArrVals(arr) {
+        while (arr.length > 0) arr.pop();
+    }
+    
+    // on hit add the coord to array, on sunk clear arrays
+    function handleAttackResults(attackResult, coords) {
+        if (attackResult === 'hit') hitCoords.push(coords);
+        if (attackResult === 'sunk') {
+            clearArrVals(hitCoords);
+            clearArrVals(adjacentTargets);
+            clearArrVals(linearTargets);
+        }
+    }
+
+    // TO FIX: when 2 separate ships are hit & no valid linear targets are around them we get a 'coords is not iterable' error. need to switch back to using adjacent targets/ other axis?
+    function smartAttack(enemyBoard) {
+        // if no valid targets attack random coord
+        if (hitCoords.length === 0 && adjacentTargets.length === 0 && linearTargets.length === 0) {
+            return randomAttack(enemyBoard);
+        }
+
+        // if attack result is a hit, get the adjacent coords in x & y axis & add to new arr
+        if (hitCoords.length === 1 && adjacentTargets.length === 0 && linearTargets.length === 0) {
+            const previousHit = hitCoords[0];
+            const nextPossibleTargets = enemyBoard.getAllValidAdjacentCoords(previousHit, enemyBoard);
+            nextPossibleTargets.forEach((target) => adjacentTargets.push(target));
+        }
+
+        //if there are 2 hits, fire along same axis
+        if (hitCoords.length > 1) {
+            clearArrVals(adjacentTargets);
+
+            const startPos = hitCoords[0];
+            const endPos = hitCoords[hitCoords.length - 1];
+            const nextPossibleLinearTargets = enemyBoard.getAllValidLinearCoords(startPos, endPos);
+            nextPossibleLinearTargets.forEach((target) => linearTargets.push(target));            
+        }
+
+        let nextTarget;
+
+        if (adjacentTargets.length > 0) {
+            nextTarget = adjacentTargets.pop();
+        } else {
+            nextTarget = linearTargets.pop();
+        }
+
+        // returns hit sunk or miss strings
+        const attackResult = proto.attack(nextTarget, enemyBoard);
+        handleAttackResults(attackResult, nextTarget);
+
+        return attackResult;
+    }
+
     function randomAttack(enemyBoard) {
-        randomCoords = proto.genRandomCoords();
-        const attackedCoord = proto.attack(randomCoords, enemyBoard);
-        return attackedCoord;
+        randomCoords = proto.genRandomCoords(); 
+        
+        const attackResult = proto.attack(randomCoords, enemyBoard);
+        handleAttackResults(attackResult, randomCoords);
+        return attackResult;
     }
 
     function getCoords() {
@@ -103,6 +162,7 @@ const Computer = () => {
         getCoords,
         ...proto,
         randomAttack,
+        smartAttack
     }
 }
 
