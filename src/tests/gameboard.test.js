@@ -105,4 +105,9 @@ describe('Gameboard factory tests', () => {
         expect(board.getEndCoord([0,5], 'horizontal', 2)).toEqual([0,6]);
     })
 
+    test('Given a coord, does getAllValidAdjacentCoords get all valid adjacent coords', () => {
+        expect(board.getAllValidAdjacentCoords([5,5])).toEqual([[6,5], [4,5], [5,6], [5,4]]);
+        expect(board.getAllValidAdjacentCoords([0,5])).toEqual([[1,5], [0,6], [0,4]]);
+        expect(board.getAllValidAdjacentCoords([9,9])).toEqual([[8,9], [9,8]]);
+    })
 })
