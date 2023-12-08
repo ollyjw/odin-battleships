@@ -96,9 +96,25 @@ const Computer = () => {
     function clearArrVals(arr) {
         while (arr.length > 0) arr.pop();
     }
+
+    // Scan board array and find cells that contain target i.e 'X'
+    const find2dCoordinates = (boardArr, target) => {
+        const coordsArr = [];
+        let coord = [];
+        boardArr.forEach((row, i) => {
+          row.forEach((item, j) => {
+            if (item.toString().includes(target, 1)) {
+              coord = [i,j];
+              coordsArr.push(coord);
+            }
+          })
+        });
+        return coordsArr;
+    };
     
     // on hit add the coord to array, on sunk clear arrays
     function handleAttackResults(attackResult, coords) {
+        // if attack result is a hit, store in arr
         if (attackResult === 'hit') hitCoords.push(coords);
         if (attackResult === 'sunk') {
             clearArrVals(hitCoords);
@@ -107,48 +123,78 @@ const Computer = () => {
         }
     }
 
-    // TO FIX: when 2 separate ships are hit & no valid linear targets are around them we get a 'coords is not iterable' error. need to switch back to using adjacent targets/ other axis?
     function smartAttack(enemyBoard) {
-        // if no valid targets attack random coord
-        if (hitCoords.length === 0 && adjacentTargets.length === 0 && linearTargets.length === 0) {
+        const enemyBoardArr = enemyBoard.getArray(); // aka player board
+        let remainingHitsArr = find2dCoordinates(enemyBoardArr, 'X');
+
+        // console.clear();
+        console.log(`HIT COORDS is: ${hitCoords}`);
+        console.log(`Remaining hits is: ${remainingHitsArr}`);
+        console.log(`ADJACENT TARGETS is: ${adjacentTargets}`);
+        console.log(`LINEAR TARGETS is: ${linearTargets}`);
+        
+
+        // 1. if no valid targets attack random coord
+        if (hitCoords.length === 0 && adjacentTargets.length === 0 && linearTargets.length === 0 && remainingHitsArr.length === 0) {
             return randomAttack(enemyBoard);
         }
 
-        // if attack result is a hit, get the adjacent coords in x & y axis & add to new arr
+        // 2. if a hit exists, store it's adjacent coords in both axis in new arr
         if (hitCoords.length === 1 && adjacentTargets.length === 0 && linearTargets.length === 0) {
             const previousHit = hitCoords[0];
             const nextPossibleTargets = enemyBoard.getAllValidAdjacentCoords(previousHit, enemyBoard);
             nextPossibleTargets.forEach((target) => adjacentTargets.push(target));
+            console.log('condition 2 - PUSH TO ADJACENT');
         }
 
-        //if there are 2 hits, fire along same axis
+        // 3. if there are 2 hit coords, store the coords within same axis in new arr (linear)
         if (hitCoords.length > 1) {
-            clearArrVals(adjacentTargets);
-
             const startPos = hitCoords[0];
             const endPos = hitCoords[hitCoords.length - 1];
             const nextPossibleLinearTargets = enemyBoard.getAllValidLinearCoords(startPos, endPos);
-            nextPossibleLinearTargets.forEach((target) => linearTargets.push(target));            
+            nextPossibleLinearTargets.forEach((target) => linearTargets.push(target));              
+            console.log('condition 3 - PUSH TO LINEAR');
         }
 
+        // 4. if arrays have been cleared after ship sunk but board array still contain hits (x)
+        if (remainingHitsArr.length > 0 && adjacentTargets.length === 0 && linearTargets.length === 0 ) {
+            const startPos = remainingHitsArr[0];
+            const endPos = remainingHitsArr[remainingHitsArr.length - 1];
+            const nextPossibleLinearTargets = enemyBoard.getAllValidLinearCoords(startPos, endPos);
+
+            // if there are no linear targets, find the adjacent targets for each remaining hit
+            if (nextPossibleLinearTargets.length === 0) {
+                const previousHit = remainingHitsArr.pop();
+                const nextPossibleAdjacentTargets = enemyBoard.getAllValidAdjacentCoords(previousHit, enemyBoard);
+                nextPossibleAdjacentTargets.forEach((target) => adjacentTargets.push(target));
+                console.log("Condition 4 - PUSH REMAINING HITS TO ADJACENT");
+            } else { //else target linear
+                nextPossibleLinearTargets.forEach((target) => linearTargets.push(target));
+                console.log("Condition 4 - PUSH REMAINING HITS TO LINEAR");
+            }
+        }
+      
         let nextTarget;
-
-        if (adjacentTargets.length > 0) {
-            nextTarget = adjacentTargets.pop();
-        } else {
+        
+        // if there is a linear target the last one from array will be nextTarget, 
+        // else target the last adjacent targets
+        if (linearTargets.length > 0) {
             nextTarget = linearTargets.pop();
+        } else {
+            nextTarget = adjacentTargets.pop();
         }
-
-        // returns hit sunk or miss strings
-        const attackResult = proto.attack(nextTarget, enemyBoard);
+        
+        console.log(`next target is ${nextTarget}`);
+        console.log(`----------------------------`);
+        
+        const attackResult = proto.attack(nextTarget, enemyBoard); // returns hit sunk or miss strings
         handleAttackResults(attackResult, nextTarget);
-
+       
         return attackResult;
     }
 
     function randomAttack(enemyBoard) {
-        randomCoords = proto.genRandomCoords(); 
-        
+        randomCoords = proto.genRandomCoords();         
         const attackResult = proto.attack(randomCoords, enemyBoard);
         handleAttackResults(attackResult, randomCoords);
         return attackResult;
