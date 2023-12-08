@@ -109,7 +109,6 @@ const enemyAttack = (attackResult) => {
                 // if boardval includes ship class id
                 if (boardVal.includes(Ship(shipType).id)) {
                     resultString = `Your ${shipType} has been ${attackResult}!`;
-                    // console.log(resultString);
                 }
             }
             DOM.renderTurnTracker();
@@ -140,6 +139,7 @@ const declareWinner = (winner) => {
 
 const playAgain = () => {
     resultString = 'Fire when ready!';
+    turn = 'Player';
     resetPlayerObjs();
     startPreGame();
 }
