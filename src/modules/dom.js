@@ -1,6 +1,7 @@
 import * as GAME from "./game";
 import { parseCoords, convertCoordToId } from "./utility/parseCoords";
 import { getName } from "./utility/getName";
+import battleShipIcon from "../assets/battleship-icon.svg";
 
 const renderOuterContainer = () => {
     const container = document.createElement('div');
@@ -280,7 +281,7 @@ function displayBoard(boardArr, mode, clickCb) {
             if (mode === 'pre-game' || mode === 'player') {
                 if (typeof boardArr[i][j] === 'number') {
                     square.classList.add("ship");
-                    square.innerHTML = ":)";
+                    square.innerHTML = battleShipIcon;
                 };
             }
             
