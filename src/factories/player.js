@@ -87,7 +87,7 @@ const Player = () => {
 // Inherit from Player factory
 const Computer = () => {
     const proto = Player();
-    let randomCoords;
+    let nextTarget;
 
     const hitCoords = [];
     const adjacentTargets = [];
@@ -128,11 +128,10 @@ const Computer = () => {
         let remainingHitsArr = find2dCoordinates(enemyBoardArr, 'X');
 
         // console.clear();
-        console.log(`HIT COORDS is: ${hitCoords}`);
-        console.log(`Remaining hits is: ${remainingHitsArr}`);
-        console.log(`ADJACENT TARGETS is: ${adjacentTargets}`);
-        console.log(`LINEAR TARGETS is: ${linearTargets}`);
-        
+        // console.log(`HIT COORDS is: ${hitCoords}`);
+        // console.log(`Remaining hits is: ${remainingHitsArr}`);
+        // console.log(`ADJACENT TARGETS is: ${adjacentTargets}`);
+        // console.log(`LINEAR TARGETS is: ${linearTargets}`);        
 
         // 1. if no valid targets attack random coord
         if (hitCoords.length === 0 && adjacentTargets.length === 0 && linearTargets.length === 0 && remainingHitsArr.length === 0) {
@@ -144,7 +143,7 @@ const Computer = () => {
             const previousHit = hitCoords[0];
             const nextPossibleTargets = enemyBoard.getAllValidAdjacentCoords(previousHit, enemyBoard);
             nextPossibleTargets.forEach((target) => adjacentTargets.push(target));
-            console.log('condition 2 - PUSH TO ADJACENT');
+            // console.log('condition 2 - PUSH TO ADJACENT');
         }
 
         // 3. if there are 2 hit coords, store the coords within same axis in new arr (linear)
@@ -153,7 +152,7 @@ const Computer = () => {
             const endPos = hitCoords[hitCoords.length - 1];
             const nextPossibleLinearTargets = enemyBoard.getAllValidLinearCoords(startPos, endPos);
             nextPossibleLinearTargets.forEach((target) => linearTargets.push(target));              
-            console.log('condition 3 - PUSH TO LINEAR');
+            // console.log('condition 3 - PUSH TO LINEAR');
         }
 
         // 4. if arrays have been cleared after ship sunk but board array still contain hits (x)
@@ -167,15 +166,13 @@ const Computer = () => {
                 const previousHit = remainingHitsArr.pop();
                 const nextPossibleAdjacentTargets = enemyBoard.getAllValidAdjacentCoords(previousHit, enemyBoard);
                 nextPossibleAdjacentTargets.forEach((target) => adjacentTargets.push(target));
-                console.log("Condition 4 - PUSH REMAINING HITS TO ADJACENT");
+                //console.log("Condition 4 - PUSH REMAINING HITS TO ADJACENT");
             } else { //else target linear
                 nextPossibleLinearTargets.forEach((target) => linearTargets.push(target));
-                console.log("Condition 4 - PUSH REMAINING HITS TO LINEAR");
+                //console.log("Condition 4 - PUSH REMAINING HITS TO LINEAR");
             }
         }
-      
-        let nextTarget;
-        
+       
         // if there is a linear target the last one from array will be nextTarget, 
         // else target the last adjacent targets
         if (linearTargets.length > 0) {
@@ -184,8 +181,8 @@ const Computer = () => {
             nextTarget = adjacentTargets.pop();
         }
         
-        console.log(`next target is ${nextTarget}`);
-        console.log(`----------------------------`);
+        // console.log(`next target is ${nextTarget}`);
+        // console.log(`----------------------------`);
         
         const attackResult = proto.attack(nextTarget, enemyBoard); // returns hit sunk or miss strings
         handleAttackResults(attackResult, nextTarget);
@@ -194,14 +191,14 @@ const Computer = () => {
     }
 
     function randomAttack(enemyBoard) {
-        randomCoords = proto.genRandomCoords();         
-        const attackResult = proto.attack(randomCoords, enemyBoard);
-        handleAttackResults(attackResult, randomCoords);
+        nextTarget = proto.genRandomCoords();         
+        const attackResult = proto.attack(nextTarget, enemyBoard);
+        handleAttackResults(attackResult, nextTarget);
         return attackResult;
     }
 
     function getCoords() {
-        return randomCoords;
+        return nextTarget;
     }
 
     return {

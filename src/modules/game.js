@@ -9,6 +9,7 @@ let turn = 'Player';
 let resultString;
 
 const resetPlayerObjs = () => {
+    console.clear();
     player = Player.Player();
     computer = Player.Computer();
     computer.placeShipsRandomly();    
@@ -77,7 +78,7 @@ const playerAttack = (coords) => {
 
 // - receive enemy attack 
 const enemyAttack = (attackResult) => { 
-    
+        
     setTimeout(() => {
         if (attackResult === 'Game Over') {           
             declareWinner('Computer'); // victory/defeat screen
@@ -91,29 +92,23 @@ const enemyAttack = (attackResult) => {
             resultString = `Computer's shot on ${convertCoordToId(computer.getCoords())} was a ${attackResult}`;
             DOM.renderTurnTracker();
         } 
-        // else if (attackResult === 'sunk') {
-        //     resultString = `Ship has been ${attackResult}!`;
-        //     DOM.renderTurnTracker();
-        // }
-
-        // Recursively call attack - random attack returns attackResult
-        enemyAttack(computer.smartAttack(player.getBoardObj()));
-
-        // NB: getCoords function will only work after randomAttack is called
-        const [row, col] = computer.getCoords();
-        const boardVal = player.getBoardObj().getArray()[row][col];
-           
-        if (attackResult === 'sunk') { // Not currently working
+        else if (attackResult === 'sunk') { // Not currently working
+            console.log('sunk!');
             for (let i = 0; player.getShipList().length > i; i++) {
                 let shipType = player.getShipList()[i];
                 // if boardval includes ship class id
-                if (boardVal.includes(Ship(shipType).id)) {
+                const [row, col] = computer.getCoords();
+                const boardVal = player.getBoardArray()[row][col];
+                if (boardVal.toString().includes(Ship(shipType).id)) {
                     resultString = `Your ${shipType} has been ${attackResult}!`;
                 }
             }
             DOM.renderTurnTracker();
         }
         
+        // Recursively call attack - random attack returns attackResult
+        enemyAttack(computer.smartAttack(player.getBoardObj()));
+                
         // update DOM boards
         DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
 
@@ -157,6 +152,4 @@ export {
 }
 
 // TO DO: 
-// - Fix enemy attack sunk message
 // Fill in X ships remaining
-// fix smart attack linear targets logic - 2 hits next to each other arent necessarily the same ship
