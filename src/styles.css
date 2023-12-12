@@ -188,6 +188,7 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
+    width: 100%;
 }
 
 .turntracker {
@@ -272,10 +273,17 @@ svg {
     }
 }
 
+@media only screen and (min-width:1124px) {
+    .turn-tracker-container {
+        width: auto;
+    }
+}
+
 @media only screen and (min-width:1624px) {
     .container {
         align-content: center;
     }
+    
     .menu-card {
         padding: 45px;
         width: 40rem;
