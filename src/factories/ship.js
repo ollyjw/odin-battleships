@@ -1,9 +1,3 @@
-// length = number
-// hits = number or array of boolean values representing each ship part?
-// isSunk = either check if damage >= length OR check if every array element is true
-
-// "REMEMBER you only have to test your object’s public interface. Only methods or properties that are used outside of your ‘ship’ object need unit tests."
-
 const Ship = (shipType) => {
     const shipClasses = {
         carrier: {
