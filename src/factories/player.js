@@ -1,8 +1,5 @@
 import Gameboard from "./gameboard";
 
-// Players can take turns playing the game by attacking the enemy Gameboard.
-// The game is played against the computer, so make the ‘computer’ capable of making random plays. The AI does not have to be smart, but it should know whether or not a given move is legal (i.e. it shouldn’t shoot the same coordinate twice).
-
 const Player = () => {
     let board = Gameboard();
     const shipLengthArray = getShipLengthArray();   
@@ -14,6 +11,10 @@ const Player = () => {
 
     function getBoardArray() {
         return board.getArray();
+    }
+
+    function getRemainingShips() {
+        return board.getRemainingShips();
     }
 
     // ['carrier', 'battleship', 'submarine', 'cruiser', 'patrolBoat']
@@ -76,7 +77,8 @@ const Player = () => {
         attack,
         genRandomCoords,
         getBoardArray,
-        getBoardObj,        
+        getBoardObj,   
+        getRemainingShips,     
         getShipList,
         placeShipsRandomly,
         shipLengthArray,

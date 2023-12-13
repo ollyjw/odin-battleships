@@ -340,8 +340,7 @@ const renderGameLayout = () => {
     const enemyContainer = document.createElement('div');
     enemyContainer.classList.add("enemy-container");
     const turnTrackerContainer = document.createElement('div');
-    turnTrackerContainer.classList.add('turn-tracker-container');    
-    
+    turnTrackerContainer.classList.add('turn-tracker-container');
     const boardsContainer = document.querySelector('.boards-container');    
     clearChildElements(boardsContainer);
     boardsContainer.appendChild(playerContainer);
@@ -358,16 +357,13 @@ const renderBoardUpdates = (enemyBoardArr, playerBoardArr) => {
 const renderPlayerBoard = (playerBoardArr) => {
     const playerContainer = document.querySelector('.player-container');
     clearChildElements(playerContainer);
-
     const playerBoard = displayBoard(playerBoardArr, 'player');
-
     const playerHeading = document.createElement('h2');
     playerHeading.classList.add('board-title', 'player');
     playerHeading.textContent = 'Player board';
     const remainingShipCounter = document.createElement('p');
     remainingShipCounter.classList.add('ship-counter');
-    remainingShipCounter.textContent = 'X Ships remaining';
-
+    remainingShipCounter.id = 'player-ship-counter';    
     playerContainer.appendChild(playerBoard);
     playerContainer.appendChild(playerHeading);
     playerContainer.appendChild(remainingShipCounter);
@@ -375,20 +371,24 @@ const renderPlayerBoard = (playerBoardArr) => {
 
 const renderEnemyBoard = (enemyBoardArr) => {
     const enemyContainer = document.querySelector('.enemy-container');
-    clearChildElements(enemyContainer);
-    
+    clearChildElements(enemyContainer);    
     const enemyBoard = displayBoard(enemyBoardArr, 'enemy', handleAttackClick);
-
     const enemyHeading = document.createElement('h2');
     enemyHeading.classList.add('board-title', 'enemy');
     const remainingShipCounter = document.createElement('p');
     remainingShipCounter.classList.add('ship-counter');
-    remainingShipCounter.textContent = 'X Ships remaining';
-
+    remainingShipCounter.id = 'enemy-ship-counter';    
     enemyHeading.textContent = 'Enemy board';
     enemyContainer.appendChild(enemyBoard);
     enemyContainer.appendChild(enemyHeading);
     enemyContainer.appendChild(remainingShipCounter);    
+}
+
+const renderRemainingShips = (playerAmount, enemyAmount) => {
+    const remainingPlayerShipsCounter = document.querySelector('#player-ship-counter');
+    remainingPlayerShipsCounter.textContent = `${playerAmount} ships remaining`;
+    const remainingEnemyShipsCounter = document.querySelector('#enemy-ship-counter');
+    remainingEnemyShipsCounter.textContent = `${enemyAmount} ships remaining`;
 }
 
 const handleAttackClick = (e) => {
@@ -459,6 +459,7 @@ export {
     renderEnemyBoard,
     renderGameLayout,
     renderPlayerBoard,
+    renderRemainingShips,
     renderTurnTracker,
     renderVictoryScreen
 }

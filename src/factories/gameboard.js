@@ -1,11 +1,5 @@
 import Ship from "./ship";
 
-// Gameboards should be able to place ships at specific coordinates by calling the ship factory function. DONE
-// Gameboards should have a receiveAttack function that takes a pair of coordinates, determines whether or not the attack hit a ship and then sends the ‘hit’ function to the correct ship, or records the coordinates of the missed shot.
-// Gameboards should keep track of missed attacks so they can display them properly.
-// Gameboards should be able to report whether or not all of their ships have been sunk.
-// SHIPS SHOULD NOT BE ABLE TO OVERLAP
-
 const Gameboard = () => {
 
     const createBoardArray = () => {
@@ -179,6 +173,18 @@ const Gameboard = () => {
     // The every() method of Array instances tests whether all elements in the array pass the test implemented by the provided function. It returns a Boolean value.
     const allShipsSunk = () => shipsArr.every((ship) => ship.isSunk());
 
+    // Return number of ships remaining
+    function getRemainingShips() {        
+        // reduce method accumulates sum of numbers in arr
+        return shipsArr.reduce((total, ship) => {
+            // add one for every ship in array of 5 items thats not sunk
+            if (!ship.isSunk()) {
+                total += 1;
+            }
+            return total;
+        }, 0); // 0 = initial value - i.e. count from 0 upwards
+    }
+
     // are coords empty, within board
     // returns true if ship can place between two given coords
     function canPlaceShipBetween(startPos, endPos) {
@@ -326,10 +332,11 @@ const Gameboard = () => {
         getAllValidAdjacentCoords,
         getAllValidLinearCoords,
         getEndCoord,
+        getRemainingShips,
         getShipTypes,
         placeShip,
         receiveAttack,        
-        types,
+        types
     };
 }
 

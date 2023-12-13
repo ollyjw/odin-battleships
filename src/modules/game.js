@@ -38,6 +38,7 @@ const startGamePlay = () => {
     DOM.renderGameLayout();
     DOM.renderPlayerBoard(player.getBoardArray());
     DOM.renderEnemyBoard(computer.getBoardArray());
+    DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
     console.log(computer.getBoardArray());
     console.log(player.getBoardArray());
 }
@@ -52,6 +53,7 @@ const playerAttack = (coords) => {
 
     // update DOM boards with attack results
     DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
+    DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
 
     if (attackResult === 'Game Over') {
         declareWinner('Player'); // victory/defeat screen
@@ -60,9 +62,11 @@ const playerAttack = (coords) => {
         turn = 'Enemy';
         enemyAttack();
         DOM.renderTurnTracker();
+        DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
     } else if (attackResult === 'hit') {
         resultString = `${convertCoordToId(coords)} was a ${attackResult}! Take another shot`;
         DOM.renderTurnTracker();
+        DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
     } else if (attackResult === 'sunk') {
         for (let i = 0; computer.getShipList().length > i; i++) {
             let shipType = computer.getShipList()[i];
@@ -71,14 +75,14 @@ const playerAttack = (coords) => {
                 resultString = `You ${attackResult} their ${shipType}! Take another shot`;
             }
         }
-        DOM.renderTurnTracker();        
+        DOM.renderTurnTracker();   
+        DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());     
     }
     return attackResult;
 }
 
 // - receive enemy attack 
 const enemyAttack = (attackResult) => { 
-        
     setTimeout(() => {
         if (attackResult === 'Game Over') {           
             declareWinner('Computer'); // victory/defeat screen
@@ -87,13 +91,13 @@ const enemyAttack = (attackResult) => {
             turn = 'Player';
             resultString = `Computer's shot on ${convertCoordToId(computer.getCoords())} was a ${attackResult}`;
             DOM.renderTurnTracker();
+            DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
             return;
         } else if (attackResult === 'hit') {
             resultString = `Computer's shot on ${convertCoordToId(computer.getCoords())} was a ${attackResult}`;
             DOM.renderTurnTracker();
-        } 
-        else if (attackResult === 'sunk') { // Not currently working
-            console.log('sunk!');
+            DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
+        } else if (attackResult === 'sunk') {
             for (let i = 0; player.getShipList().length > i; i++) {
                 let shipType = player.getShipList()[i];
                 // if boardval includes ship class id
@@ -104,6 +108,7 @@ const enemyAttack = (attackResult) => {
                 }
             }
             DOM.renderTurnTracker();
+            DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());
         }
         
         // Recursively call attack - random attack returns attackResult
@@ -111,9 +116,11 @@ const enemyAttack = (attackResult) => {
                 
         // update DOM boards
         DOM.renderBoardUpdates(computer.getBoardArray(), player.getBoardArray());
+        DOM.renderRemainingShips(player.getRemainingShips(), computer.getRemainingShips());       
 
         return attackResult;
     }, 700);
+
 }
 
 const getTurn = () => {
@@ -150,6 +157,3 @@ export {
     startGame,
     startGamePlay
 }
-
-// TO DO: 
-// Fill in X ships remaining
